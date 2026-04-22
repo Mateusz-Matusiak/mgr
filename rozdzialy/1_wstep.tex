@@ -1,0 +1,39 @@
+\chapter{Wstęp}
+
+\section{Temat pracy}
+
+Tematem niniejszej pracy magisterskiej jest opracowanie oraz analiza działania algorytmów służących do oceny badań obrazowych odcinka lędźwiowego kręgosłupa. Dane wejściowe dla opracowanych metod stanowi segmentacja kręgosłupa w obrębie odcinka lędźwiowego, natomiast rezultatem jest klasyfikacja przypadku jako zdrowego lub patologicznego. Implementacja algorytmów została przeprowadzona w języku Python z wykorzystaniem specjalistycznych bibliotek dedykowanych przetwarzaniu obrazów medycznych.
+
+Wybór tematu pracy podyktowany jest dużą częstością występowania schorzeń odcinka lędźwiowego kręgosłupa w populacji ogólnej. Dolegliwości bólowe w tym obszarze należą do najczęściej zgłaszanych problemów zdrowotnych, które istotnie obniżają jakość życia pacjentów i generują wysokie koszty leczenia. Współczesna medycyna wykorzystuje w diagnostyce zaawansowane metody obrazowania, takie jak rezonans magnetyczny (MRI) czy tomografia komputerowa (CT). Wygenerowane w ten sposób obrazy w formacie DICOM zawierają jednak ogromną ilość danych, których analiza wymaga odpowiedniego przygotowania i specjalistycznej wiedzy.
+
+Automatyczna analiza obrazów medycznych stanowi dynamicznie rozwijającą się dziedzinę, której celem jest wspieranie lekarzy w procesie diagnostycznym. Jednym z kluczowych etapów tego procesu jest segmentacja struktur anatomicznych, umożliwiająca dalszą obróbkę i analizę danych. W przypadku kręgosłupa lędźwiowego poprawnie przeprowadzona segmentacja pozwala na wyodrębnienie interesującego obszaru i stanowi podstawę do opracowania algorytmów klasyfikacyjnych.
+
+Celem głównym pracy jest zaprojektowanie, implementacja oraz analiza skuteczności algorytmów służących do klasyfikacji badań odcinka lędźwiowego kręgosłupa jako zdrowych lub patologicznych. Cele szczegółowe obejmują:
+
+przygotowanie i wstępne przetwarzanie danych obrazowych,
+
+opracowanie różnych podejść algorytmicznych do klasyfikacji przypadków,
+
+porównanie wyników uzyskanych metod pod kątem skuteczności, stabilności i praktycznej przydatności,
+
+ocenę możliwości wykorzystania zaproponowanych rozwiązań w procesie diagnostycznym.
+
+Znaczenie praktyczne niniejszej pracy wiąże się z rosnącą potrzebą tworzenia narzędzi wspierających pracę specjalistów w dziedzinie radiologii. Automatyczne lub półautomatyczne systemy mogą nie tylko skrócić czas analizy obrazów, ale również zmniejszyć ryzyko błędu ludzkiego.
+
+Praca została zrealizowana w języku Python, wykorzystując dedykowane biblioteki do przetwarzania obrazów (m.in. SimpleITK, scikit-image, NumPy) oraz narzędzia wspomagające implementację i analizę algorytmów klasyfikacyjnych.
+
+\section{Znaczenie problemu}
+Kręgosłup człowieka stanowi główną oś szkieletu i pełni kluczowe funkcje w organizmie. Zbudowany jest z 24 kręgów podzielonych na odcinki: szyjny, piersiowy, lędźwiowy, krzyżowy, guziczny. Odcinek lędźwiowy składa się z pięciu największych i najmocniejszych kręgów, które odpowiadają za utrzymanie znacznej części ciężaru ciała oraz odpowiadają za wykonywanie szerokiego zakresu ruchów w płaszczyźnie strzałkowej. Ze względu na swoje położenie i funkcje odcinek ten jest szczególnie narażony na przeciążenie mechaniczne, urazy oraz procesy degeneracyjne.
+
+Patologie odcinka lędźwiowego mogą mieć zróżnicowany charakter – od zmian zwyrodnieniowych i przepuklin dysków międzykręgowych, poprzez zwężenia kanału kręgowego, aż po wady wrodzone czy zmiany pourazowe. Wczesne wykrycie nieprawidłowości ma kluczowe znaczenie, ponieważ szybka diagnoza i odpowiednie leczenie pozwalają ograniczyć postęp choroby, zmniejszyć nasilenie objawów bólowych, a także poprawić rokowania pacjenta. Brak szybkiej interwencji może prowadzić do przewlekłego bólu, ograniczenia mobilności, a nawet trwałej niepełnosprawności.
+
+Skala problemu jest znacząca zarówno w Polsce, jak i na świecie. Według danych Światowej Organizacji Zdrowia (WHO) bóle krzyża należą do najczęściej występujących dolegliwości układu mięśniowo-szkieletowego, a w ciągu życia doświadcza ich nawet 70–80\% populacji. Schorzenia kręgosłupa są jedną z głównych przyczyn absencji w pracy oraz ograniczenia aktywności zawodowej. W Polsce, jak wskazują raporty Narodowego Funduszu Zdrowia, choroby związane z odcinkiem lędźwiowym stanowią jedną z najczęstszych przyczyn konsultacji ortopedycznych i neurologicznych. Szacuje się, że co roku setki tysięcy pacjentów wymagają diagnostyki obrazowej tego obszaru, głównie w postaci rezonansu magnetycznego (MRI) oraz tomografii komputerowej (CT).
+
+Rosnąca liczba przypadków, starzenie się społeczeństwa oraz coraz większe obciążenia związane ze współczesnym stylem życia (praca siedząca, brak aktywności fizycznej, otyłość) sprawiają, że problem schorzeń kręgosłupa lędźwiowego staje się jednym z kluczowych wyzwań współczesnej medycyny. Z tego względu poszukiwanie nowych metod wspierających proces diagnostyczny, w tym narzędzi automatyzujących analizę obrazów medycznych, nabiera szczególnego znaczenia. Rozwiązania te mogą nie tylko przyspieszyć wykrycie patologii, ale również odciążyć specjalistów, umożliwiając im skupienie się na najbardziej wymagających przypadkach klinicznych.
+
+Wybór problematyki odcinka lędźwiowego w niniejszej pracy magisterskiej jest zatem uzasadniony zarówno ze względów klinicznych, jak i społecznych. Opracowanie i analiza algorytmów klasyfikacyjnych opartych na danych obrazowych może przyczynić się do poprawy jakości diagnostyki oraz stworzyć podstawę do dalszego rozwoju systemów wspomagania decyzji medycznych w radiologii.
+
+\section{Obrazowanie medyczne i przetwarzanie danych}
+Dynamiczny rozwój metod obrazowania medycznego w ostatnich dekadach przyczynił się do istotnego postępu w diagnostyce oraz monitorowaniu wielu schorzeń. Obrazy medyczne dostarczają szczegółowych informacji o budowie i funkcjonowaniu narządów, umożliwiając wczesne wykrycie patologii oraz dobór optymalnej terapii. Ze względu na złożoność i wielowymiarowość danych, ich prawidłowe przechowywanie, udostępnianie oraz analiza wymagają zastosowania specjalistycznych standardów i narzędzi.
+
+Podstawowym standardem przechowywania i wymiany danych obrazowych w medycynie jest DICOM (Digital Imaging and Communications in Medicine). Format ten został opracowany w latach 80. XX wieku w celu ujednolicenia zapisu danych pochodzących z różnych urządzeń diagnostycznych. DICOM łączy w sobie zarówno obraz, jak i zestaw metadanych opisujących m.in. dane pacjenta, parametry badania, modalność, a także informacje dotyczące ustawień aparatury.

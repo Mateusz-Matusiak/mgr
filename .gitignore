@@ -1,0 +1,23 @@
+/.idea/
+/spine-ls-mgr/.idea/
+/spine-ls-mgr/.venv/
+
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.toc
+*.synctex.gz
+*.synctex(busy)
+
+# Output PDF
+main.pdf
+
+# macOS
+.DS_Store
