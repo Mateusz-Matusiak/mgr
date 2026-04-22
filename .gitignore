@@ -21,3 +21,5 @@ main.pdf
 
 # macOS
 .DS_Store
+
+spine-ls-mgr/*.xlsx
