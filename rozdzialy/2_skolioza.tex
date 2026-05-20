@@ -1,7 +1,7 @@
 \chapter{Algorytm diagnozowania skoliozy}
 
 
-\section{Opis}
+\section{Kliniczna charakterystyka skoliozy}
 Skolioza opisywana jest w literaturze medycznej jako jedno lub więcej nieprawidłowych bocznych skrzywień kręgosłupa z rotacją kręgów lub bez. Według Scoliosis Research Society skoliozę określa się jako skrzywienie kręgosłupa o kąt większy niż 10\degree. Na zdjęciu rentgenowskim kręgosłup osoby cierpiącej na skoliozę wygląda bardziej jak litera ``S'' lub ``C'' niż prosta linia. \cite{srs} Termin ``skolioza'' ma swoje korzenie w starożytnym słowie ``skolios'' (wygięty, skrzywiony) i został po raz pierwszy użyty przez Galena (130-201 rok naszej ery).\cite{koniecznymr}
 
 Skoliozę można podzielić na typy: idiopatyczną, wrodzoną i nerwowo-mięśniową. Najczęstsza postać skoliozy czyli idiopatyczna skolioza młodzieńcza (AIS), ma nieznaną przyczynę co odzwierciedla termin ``idiopatyczna''. AIS jest zazwyczaj wykrywane w okresie dzieciństwa i dorastania, zwłaszcza w okresach szybkiego wzrostu. Skolioza wrodzona jest spowodowana nieprawidłowym rozwojem kręgosłupa w stadium embrionalnym, co może obejmować brak segmentacji kręgów, nieprawidłowy kształt lub nieprawidłową liczbę kręgów. Ten rodzaj skoliozy jest często związany z czynnikami genetycznymi i może współistnieć z innymi wadami wrodzonymi, dlatego zazwyczaj rozpoznaje się go po urodzeniu lub we wczesnym okresie niemowlęcym.\cite{lim} Skolioza nerwowo-mięśniowa jest wynikiem zaburzeń nerwowo-mięśniowych, które wypływają na mięśnie i nerwy odpowiedzialne za utrzymanie prawidłowego ułożenia kręgosłupa. Do najczęstszych przyczyn należą: porażenia mózgowe, dystrofia mięśniowa i urazy rdzenia kręgowego. \cite{yale}
@@ -27,6 +27,7 @@ Pomiar kąta Cobba polega na konstrukcji prostych geometrycznych prowadzonych wz
 
 Wartość kąta Cobba stanowi podstawowy parametr ilościowy determinujący rozpoznanie skoliozy, ocenę jej nasilenia oraz dobór strategii terapeutycznej. Kąt poniżej 10\degree traktuje się jako asymetrię tułowia, natomiast wartości równe lub przekraczające 10\degree stanowi kryterium rozpoznania skoliozy. Zakres 10-25\degree zwykle kwalifikuje pacjenta do obserwacji i leczenia zachowawczego, natomiast skrzywienie 25-45\degree u pacjentów rosnących stanowi wskazanie do leczenia gorsetowego. Deformacje przekraczające 45-50\degree rozważa się w kontekście leczenia operacyjnego, zwłaszcza w przypadku progresji. Metoda Cobba odgrywa również istotną rolę w ocenie dynamiki skrzywienia - progresja o więcej niż 5\degree pomiędzy kolejnymi badaniami RTG uznawana jest za klinicznie istotną. Dzięki swojej prostocie i wysokiej reprodukowalności parametr ten pozostaje podstawą planowania i monitorowania leczenia skoliozy we wszystkich postaciach.
 
+Kliniczny standard pomiaru kąta Cobba opiera się na zdjęciu RTG wykonanym w pozycji stojącej. Niniejsza praca proponuje automatyzację analogicznego pomiaru na podstawie trójwymiarowej segmentacji badania MRI. Podejście to zachowuje matematyczną definicję metody Cobba, eliminując jednocześnie konieczność ręcznego wskazywania kręgów krańcowych przez radiologa.
 
 \section{Założenia funkcjonalne i niefunkcjonalne}
 W celu zrealizowania postawionego celu pracy zdefiniowano szereg wymagań funkcjonalnych oraz niefunkcjonalnych.
@@ -64,7 +65,7 @@ W niniejszym rozdziale przedstawiono opis zaprojektowanego algorytmu. Proces prz
     \label{fig:scoliosis-pipeline}
 \end{figure}
 
-\subsection{Wyznaczenie szkieletu kanału kręgowego}
+\subsection{Wyznaczenie i rekonstrukcja linii środkowej kanału kręgowego}
 Pierwszym krokiem algorytmu jest wyznaczenie szkieletu kanału kręgowego. Metoda zaczyna się od połączenia trzech części segmentacji odpowiadającym kanałowi kręgowemu, kanału kręgowego (`spinal\_canal`), końskiego ogona (`cauda\_equina`) oraz worka oponowego (`dural\_sac`), w jedną. W ten sposób obszar kanału kręgowego jest bardziej odporny na `przerwy` w segmentacji, zwiększa obszar do późniejszego procesowania.
 
 Następnym krokiem jest przekazanie złączonych etykiet do funkcji  \texttt{skeletonize} z argumentem \texttt{method=lee} z pakietu \texttt{scikit-image} w celu wyznaczenie szkieletu kanału kręgowego.\cite{scikit-skeletonize} Następnie za zwróconym zestawie pikseli (szkielecie) dokonano przepróbkowania (resamplingu) do przestrzeni wejściowego kanału kręgowego. Kolejnym krokiem jest przeiterowanie się przez całą długość wektora Z (wysokość) przepróbkowanego szkieletu kanału kręgowego z krokiem równym grubości warstwy przestrzeni i wyznaczenie punktów kanału kręgowego. Niekiedy segmentacja kanału kręgowego mimo połączenia trzech etykiet dalej jest niepełna bądź nieciągła, w tym przypadku wykrywane są brakujące fragmenty i uzupełniane.
@@ -364,7 +365,7 @@ Następnie zastosowano algorytm \textbf{Douglasa-Peuckera}\cite{douglas-peucker}
 Proces ten redukuje liczbę punktów opisujących kształt, pozostawiając jedynie te najbardziej istotne z punktu widzenia geometrii struktury.
 
 Ostatnim etapem analizy geometrycznej jest selekcja czterech kluczowych punktów narożnych z uzyskanego wielokąta aproksymacyjnego.
-W tym celu zaimplementowano algorytm oparty na analizie sumy i różnicy współrzędnych $[x,y]$ punktów konturu, co pozwala na ich jednoznaczną klasyfikację topologiczną (lewy górny, prawy górny, lewy dolny, prawy dolny).
+W tym celu zaimplementowano algorytm oparty na analizie sumy i różnicy współrzędnych $[x,y]$ punktów konturu, co pozwala na ich jednoznaczną klasyfikację topologiczną (lewy górny, prawy górny, lewy dolny, prawy dolny). Metoda ta jest poprawna dla prostokątnych i quasi-prostokątnych kształtów (takich jak trzon kręgu).
 
 Lewy górny róg ($P_{TL}$) oraz prawy dolny rów ($P_{BR}$) są identyfikowane poprzez minimalizację i maksymalizację sumy współrzędnych:
 \begin{equation}
@@ -460,10 +461,10 @@ Dzięki temu zabiegowi, wszystkie punkty narożne analizowanej pary kręgów zos
     \begin{subfigure}[b]{0.48\textwidth}
     \centering
     \includegraphics[width=\textwidth]{obrazy/after_mapping_to_common_plane_upper.png}
-    \caption{Widok boczny}
+    \caption{Widok dolny}
     \label{fig:upper_common_plane}
     \end{subfigure}
-    \caption{Przestrzenna wizualizacja wyników ekstrakcji punktów narożnych trzonu kręgu w lokalnym układzie współrzędnych płaszczyzny przekroju. Widoczne dopasowanie punktów do krawędzi struktury anatomicznej po transformacji z układu 2D do przestrzeni 3D.}
+    \caption{Przestrzenna wizualizacja wyników rzutowania punktów kręgu na wspólną płaszczyznę analizowanej pary kręgów.}
 \end{figure}
 
 
@@ -501,5 +502,4 @@ Obliczenia kąta Cobba wykonywane są dla wszystkich par kręgów $(k_i,\, k_j)$
     \alpha_{max} = \max_{\substack{i,j \\ j \geq i+2}} |\alpha(k_i, k_j)|
 \end{equation}
 
-Wynikiem końcowym algorytmu jest para kręgów $(k_i, k_j)$, dla której wyznaczono $\alpha_{max}$, wartość tego kąta oraz klasyfikacja strony skrzywienia.
-
+Wynikiem działania algorytmu jest wartość kąta Cobba wyrażona w stopniach, para kręgów wyznaczająca największą deformację oraz strona skrzywienia (prawostronna lub lewostronna). Dane pośrednie - punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów - są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.

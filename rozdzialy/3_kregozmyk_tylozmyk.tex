@@ -1,0 +1,98 @@
+\chapter{Algorytm diagnozowania kręgozmyku/tyłozmyku}
+
+\section{Kliniczna charakterystyka kręgozmyku i tyłozmyku}
+
+Kręgozmyk (łac. \textit{spondylolisthesis}, z gr. \textit{spondylos} - kręg,
+\textit{olisthesis} - ześlizg) definiowany jest jako przemieszczenie trzonu
+kręgu ku przodowi względem kręgu leżącego poniżej, obserwowane w płaszczyźnie
+strzałkowej.\cite{TODO-definicja-kregozmyku} Przeciwieństwem tej patologii jest
+tyłozmyk (ang. \textit{retrolisthesis}), w którym przemieszczenie następuje
+w kierunku tylnym. Obydwa stany prowadzą do zaburzenia prawidłowej osi
+biomechanicznej kręgosłupa, a w zaawansowanych przypadkach - do zwężenia kanału
+kręgowego i ucisku struktur nerwowych.
+
+Powszechnie stosowana klasyfikacja Wiltse'a, Newmana i Macnaba\cite{TODO-wiltse}
+wyróżnia pięć typów kręgozmyku ze względu na mechanizm powstawania:
+\begin{itemize}
+    \item \textbf{dysplastyczny} - wynikający z wrodzonej wady budowy
+          stawów międzykręgowych lub tylnego łuku kręgu; rozpoznawany
+          zazwyczaj w dzieciństwie,
+    \item \textbf{cieśniowy} (istmiczny) - spowodowany przerwaniem ciągłości
+          części międzystawowej łuku kręgowego (spondylolizą); najczęstszy typ
+          u osób młodych, szczególnie narażonych na przeciążenia osiowe,
+    \item \textbf{zwyrodnieniowy} - będący konsekwencją degeneracji krążków
+          międzykręgowych oraz stawów międzykręgowych; dominujący typ u osób
+          po 50. roku życia i najczęściej spotykany w zbiorze danych
+          analizowanym w niniejszej pracy,
+    \item \textbf{pourazowy} - następstwo złamania elementów tylnych kręgu
+          innych niż część międzystawowa,
+    \item \textbf{patologiczny} - wynikający z miejscowej lub uogólnionej
+          choroby kości, np. nowotworowej lub metabolicznej.
+\end{itemize}
+
+Kręgozmyk zwyrodnieniowy dotyczy przede wszystkim poziomów L4/L5 i L5/S1,
+gdzie obciążenie mechaniczne kręgosłupa jest największe. Degeneracja krążka
+międzykręgowego prowadzi do niestabilności segmentu ruchowego, a wtórne zmiany
+w stawach międzykręgowych nie są w stanie skutecznie ograniczyć patologicznego
+ruchu trzonów.\cite{TODO-kregozmyk-zwyrodnieniowy} Tyłozmyk zwyrodnieniowy
+występuje rzadziej niż kręgozmyk przedni i częściej towarzyszy mu
+wielopoziomowe zwężenie kanału kręgowego.
+
+Objawy kliniczne zależą od stopnia przemieszczenia i poziomu zajętego odcinka.
+Najczęstszą dolegliwością jest ból w dolnej części pleców, nasilający się
+podczas stania i chodzenia, a ustępujący w pozycji siedzącej lub przy
+nachyleniu tułowia do przodu. Przy ucisku korzeni nerwowych dołącza się
+ból promieniujący do kończyn dolnych (rwa kulszowa lub udowa), zaburzenia
+czucia oraz osłabienie siły mięśniowej.
+
+Diagnostyka obrazowa kręgozmyku opiera się przede wszystkim na zdjęciu
+rentgenowskim kręgosłupa lędźwiowo-krzyżowego wykonanym w projekcji bocznej
+w pozycji stojącej. Takie badanie uwzględnia obciążenie grawitacyjne kręgosłupa,
+które może nasilać przemieszczenie w porównaniu z badaniem w pozycji leżącej.
+Rezonans magnetyczny stanowi uzupełnienie diagnostyki, umożliwiając ocenę stopnia
+ucisku worka oponowego, korzeni nerwowych oraz stanu krążków
+międzykręgowych.\cite{TODO-diagnostyka-obrazowa} To właśnie dane z badań MRI,
+po przeprowadzonej segmentacji, stanowią wejście dla algorytmu opisanego
+w niniejszym rozdziale.
+
+Ilościową ocenę stopnia przemieszczenia kręgu przeprowadza się metodą
+Meydinga\cite{TODO-meyerding}, która dzieli kręgozmyk na cztery stopnie
+w zależności od odsetka przesunięcia trzonu kręgu w stosunku do szerokości
+górnej powierzchni kręgu leżącego poniżej. W tym celu na bocznym zdjęciu RTG
+wyznacza się tylny obrys trzonu kręgu górnego i dolnego, a wartość ześlizgu
+wyraża się jako iloraz odległości między tylnymi krawędziami trzonów do
+szerokości górnej płytki granicznej kręgu dolnego. Stopniowanie przedstawiono
+w tabeli~\ref{tab:meyerding}.
+
+\begin{table}[H]
+\centering
+\caption{Klasyfikacja kręgozmyku według skali Meydinga}
+\label{tab:meyerding}
+\begin{tabular}{ccc}
+\hline
+\textbf{Stopień} & \textbf{Przemieszczenie} & \textbf{Opis kliniczny} \\
+\hline
+I   & 0--25\%   & łagodny, często bezobjawowy \\
+II  & 25--50\%  & umiarkowany, zazwyczaj objawowy \\
+III & 50--75\%  & znaczny, zwężenie kanału kręgowego \\
+IV  & 75--100\% & ciężki, wyraźne objawy neurologiczne \\
+\hline
+\end{tabular}
+\end{table}
+
+Pomiar według Meydinga jest prosty i powtarzalny, jednak obarczony pewną
+zmiennością obserwatora wynikającą z trudności w precyzyjnym wyznaczeniu
+obrysów trzonów na dwuwymiarowym zdjęciu RTG. Ponadto standardowa projekcja
+boczna nie uwzględnia rotacji osiowej kręgów, która może towarzyszyć
+kręgozmykowi zwłaszcza w przebiegu skoliozy.\cite{TODO-ograniczenia-pomiaru}
+
+Algorytm opisany w niniejszym rozdziale realizuje automatyczny pomiar
+analogiczny do metody Meydinga, operując jednak na trójwymiarowej segmentacji
+MRI zamiast dwuwymiarowego zdjęcia RTG. Wyznaczone punkty narożne trzonów
+kręgów pozwalają na obliczenie znormalizowanego przesunięcia w płaszczyźnie
+strzałkowej każdego kręgu, bez konieczności ręcznego wskazywania struktur
+anatomicznych przez radiologa.
+
+\section{Założenia funkcjonalne i niefunkcjonalne}
+
+Algorytm detekcji kręgozmyku i tyłozmyku współdzieli szereg założeń z algorytmem detekcji skoliozy opisanym w rozdziale~\ref{chap:skolioza}. Dotyczy to w szczególności: obsługi wolumetrycznych danych wejściowych w formacie NIfTI, wyznaczania linii środkowej kanału kręgowego, ekstrakcji przekrojów 2D wraz z detekcją punktów charakterystycznych, eksportu wyników w formacie JSON kompatybilnym z~oprogramowaniem 3D~Slicer, a~także wymagań dotyczących odporności na nieciągłości w segmentacji, powtarzalności wyników oraz efektywności czasowej przetwarzania.
