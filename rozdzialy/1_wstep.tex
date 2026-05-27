@@ -8,15 +8,17 @@ Wybór tematu pracy podyktowany jest dużą częstością występowania schorze�
 
 Automatyczna analiza obrazów medycznych stanowi dynamicznie rozwijającą się dziedzinę, której celem jest wspieranie lekarzy w procesie diagnostycznym. Jednym z kluczowych etapów tego procesu jest segmentacja struktur anatomicznych, umożliwiająca dalszą obróbkę i analizę danych. W przypadku kręgosłupa lędźwiowego poprawnie przeprowadzona segmentacja pozwala na wyodrębnienie interesującego obszaru i stanowi podstawę do opracowania algorytmów klasyfikacyjnych.
 
-Celem głównym pracy jest zaprojektowanie, implementacja oraz analiza skuteczności algorytmów służących do klasyfikacji badań odcinka lędźwiowego kręgosłupa jako zdrowych lub patologicznych. Cele szczegółowe obejmują:
+Celem głównym pracy jest zaprojektowanie, implementacja oraz analiza skuteczności algorytmów służących do klasyfikacji badań odcinka lędźwiowego kręgosłupa jako zdrowych lub patologicznych.
+Cele szczegółowe obejmują:
+\begin{itemize}
+    \item przygotowanie i wstępne przetwarzanie danych obrazowych,
 
-przygotowanie i wstępne przetwarzanie danych obrazowych,
+    \item opracowanie różnych podejść algorytmicznych do klasyfikacji przypadków,
 
-opracowanie różnych podejść algorytmicznych do klasyfikacji przypadków,
+    \item porównanie wyników uzyskanych metod pod kątem skuteczności, stabilności i praktycznej przydatności,
 
-porównanie wyników uzyskanych metod pod kątem skuteczności, stabilności i praktycznej przydatności,
-
-ocenę możliwości wykorzystania zaproponowanych rozwiązań w procesie diagnostycznym.
+    \item ocenę możliwości wykorzystania zaproponowanych rozwiązań w procesie diagnostycznym.
+\end{itemize}
 
 Znaczenie praktyczne niniejszej pracy wiąże się z rosnącą potrzebą tworzenia narzędzi wspierających pracę specjalistów w dziedzinie radiologii. Automatyczne lub półautomatyczne systemy mogą nie tylko skrócić czas analizy obrazów, ale również zmniejszyć ryzyko błędu ludzkiego.
 
@@ -36,7 +38,8 @@ Wybór problematyki odcinka lędźwiowego w niniejszej pracy magisterskiej jest 
 \section{Obrazowanie medyczne i przetwarzanie danych}
 Dynamiczny rozwój metod obrazowania medycznego w ostatnich dekadach przyczynił się do istotnego postępu w diagnostyce oraz monitorowaniu wielu schorzeń. Obrazy medyczne dostarczają szczegółowych informacji o budowie i funkcjonowaniu narządów, umożliwiając wczesne wykrycie patologii oraz dobór optymalnej terapii. Ze względu na złożoność i wielowymiarowość danych, ich prawidłowe przechowywanie, udostępnianie oraz analiza wymagają zastosowania specjalistycznych standardów i narzędzi.
 
-Podstawowym standardem przechowywania i wymiany danych obrazowych w medycynie jest DICOM (Digital Imaging and Communications in Medicine). Format ten został opracowany w latach 80. XX wieku w celu ujednolicenia zapisu danych pochodzących z różnych urządzeń diagnostycznych. DICOM łączy w sobie zarówno obraz, jak i zestaw metadanych opisujących m.in. dane pacjenta, parametry badania, modalność, a także informacje dotyczące ustawień aparatury.
+Podstawowym standardem przechowywania i wymiany danych obrazowych w medycynie jest DICOM (Digital Imaging and Communications in Medicine)\cite{dicom}. Format ten został opracowany w latach 80. XX wieku w celu ujednolicenia zapisu danych pochodzących z różnych urządzeń diagnostycznych.
+DICOM łączy w sobie zarówno obraz, jak i zestaw metadanych opisujących m.in. dane pacjenta, parametry badania, modalność, a także informacje dotyczące ustawień aparatury.
 Pojedyncze badanie MRI odcinka lędźwiowego kręgosłupa składa się typowo z setek plików DICOM - po jednym na każdą warstwę (przekrój) wolumenu. Choć takie podejście jest optymalne z perspektywy systemów klasy PACS (ang. \textit{Picture Archiving and Communication System}), stanowi istotne utrudnienie   w kontekście algorytmicznego przetwarzania danych. Rekonstrukcja trójwymiarowego wolumenu z sekwencji pojedynczych plików, dekodowanie złożonych nagłówków oraz obsługa zależności między metadanymi poszczególnych warstw wprowadza znaczną złożoność implementacyjną, która nie wnosi wartości z punktu widzenia analizy geometrii kręgosłupa.
 
 Z tego względu w badaniach nad przetwarzaniem obrazów medycznych powszechnie stosuje się format NIfTI (ang. \textit{Neuroimaging Informatics Technology Initiative})\cite{nifti}, opracowany na początku XXI wieku przez grupę roboczą finansowaną przez Narodowe Instytuty Zdrowia Stanów Zjednoczonych (NIH). Format ten przechowuje cały trójwymiarowy wolumetr w jednym pliku o rozszerzeniu \texttt{.nii} lub \texttt{.nii.gz} (wariant skompresowany algorytmem gzip). Nagłówek pliku NIfTI zawiera informacje niezbędne do poprawnej interpretacji geometrycznej wolumenu: wymiary macierzy wokseli wzdłuż każdej osi, rozdzielczość przestrzenną (ang. \textit{spacing} - odległość między środkami sąsiednich wokseli wyrażona w milimetrach) oraz afiniczną macierz transformacji (ang. \textit{affine matrix}), która jednoznacznie definiuje orientację i pozycję wolumenu w fizycznym układzie współrzędnych pacjenta. Dzięki tej macierzy biblioteki takie jak SimpleITK\cite{sitk} umożliwiają dwukierunkową transformację między indeksami wokseli a współrzędnymi fizycznymi - operację kluczową dla algorytmów opisanych w dalszych rozdziałach pracy. Format NIfTI nie przechowuje danych identyfikujących pacjenta, co ułatwia anonimizację i udostępnianie zbiorów badawczych.
