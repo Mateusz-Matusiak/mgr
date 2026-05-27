@@ -96,3 +96,54 @@ anatomicznych przez radiologa.
 \section{Założenia funkcjonalne i niefunkcjonalne}
 
 Algorytm detekcji kręgozmyku i tyłozmyku współdzieli szereg założeń z algorytmem detekcji skoliozy opisanym w rozdziale~\ref{chap:skolioza}. Dotyczy to w szczególności: obsługi wolumetrycznych danych wejściowych w formacie NIfTI, wyznaczania linii środkowej kanału kręgowego, ekstrakcji przekrojów 2D wraz z detekcją punktów charakterystycznych, eksportu wyników w formacie JSON kompatybilnym z~oprogramowaniem 3D~Slicer, a~także wymagań dotyczących odporności na nieciągłości w segmentacji, powtarzalności wyników oraz efektywności czasowej przetwarzania.
+
+Wymagania funkcjonalne:
+
+\begin{itemize}
+    \item \textbf{Rekonstrukcja linii środkowej o równomiernym próbkowaniu}
+    - krzywa kanału kręgowego jest poddawana uzupełnieniu luk i reparametryzowana według kumulatywnej
+    długości łuku, co zapewnia równomierne rozmieszczenie punktów
+    referencyjnych wzdłuż kanału.
+
+    \item \textbf{Pomiar znormalizowanego przesunięcia strzałkowego}
+    - algorytm oblicza przemieszczenie górnego trzonu kręgu względem
+    dolnego. Wynik jest wartością bezwymiarową z przedziału $[0, 1]$, interpretowaną jako
+    odsetek szerokości trzonu kręgu dolnego - analogicznie do skali Meydinga stosowanej w pomiarach na zdjęciach RTG.
+
+    \item \textbf{Analiza wszystkich par sąsiednich kręgów} - algorytm oblicza przemieszczenie górnego trzonu względem dolnego.
+    Wynik jest wartością bezwymiarową z przedziału $[0, 1]$,
+    interpretowaną jako odsetek szerokości dolnego trzonu, analogicznie
+    do skali Meydinga.
+    \item \textbf{Klasyfikacja kierunku przesunięcia}
+    - na podstawie znaku rzutu algorytm rozróżnia kręgozmyk
+    (przemieszczenie do przodu, \textit{spondylolisthesis})
+    od tyłozmyku (przemieszczenie do tyłu, \textit{retrolisthesis}).
+    \item \textbf{Analiza wszystkich par sąsiednich kręgów}
+    - pomiar wykonywany jest dla każdej pary kolejnych kręgów
+    obecnych w segmentacji (Th11--S1); wynik zwracany jest osobno
+    dla każdego poziomu.
+\end{itemize}
+
+Wymagania niefunkcjonalne:
+\begin{itemize}
+    \item \textbf{Odporność na nieciągłości segmentacji kanału kręgowego} - algorytm
+    wypełnia luki w szkielecie kanału kręgowego wynikające ze słabej jakości segmentacji lub obecności artefaktów w badaniu MRI.
+
+    \item \textbf{Niezależność od orientacji przestrzennej kręgosłupa}
+    - algorytm oblicza poprawny wynik niezależnie od globalnego pochylenia i rotacji kręgosłupa
+    w przestrzeni skanera, a tym samym niezależnie od ułożenia pacjenta podczas badania.
+
+    \item \textbf{Niezależność wyniku od skali przestrzeni obrazowej}
+    - algorytm zwraca poprawne wyniki niezależnie od parametrów aparatu MRI takich jak rozdzielczość wokseli.
+
+    \item \textbf{Powtarzalność wyników} - dla tych samych danych
+    wejściowych algorytm musi zwracać zawsze ten sam wynik pomiarowy, bez elementów losowych.
+
+    \item \textbf{Efektywność czasowa przetwarzania} - czas
+    przetwarzania pojedynczego badania nie powinien przekraczać
+    wartości akceptowalnej w kontekście wspomagania diagnostyki
+    klinicznej.
+\end{itemize}
+
+Realizację powyższych wymagań opisano w kolejnych podrozdziałach, przedstawiając kolejne etapy przetwarzania danych od wczytania segmentacji do wyznaczenia wartości
+przesunięcia.
