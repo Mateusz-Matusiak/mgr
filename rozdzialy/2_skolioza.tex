@@ -79,21 +79,23 @@ W celu zrealizowania postawionego celu pracy zdefiniowano szereg wymagań funkcj
 Wymagania funkcjonalne:
 
 \begin{itemize}
-    \item \textbf{Obsługa wejściowych danych wolumetrycznych} -- system musi umożliwiać wczytanie trójwymiarowych obrazów medycznych (mapy segmentacji) w standardzie NIfTI\cite{nifti} (.nii.gz), reprezentujący odcinek lędźwiowy kręgosłupa wraz z kanałem kręgowym.
+    \item \textbf{Obsługa wejściowych danych wolumetrycznych} -- system musi umożliwiać wczytanie trójwymiarowych obrazów medycznych (mapy segmentacji) w standardzie NIfTI\cite{nifti} (.nii.gz), reprezentujące odcinek lędźwiowy kręgosłupa wraz z kanałem kręgowym.
     \item \textbf{Wyznaczenie linii środkowej kanału kręgowego} -- algorytm musi wygenerować gładką krzywą reprezentującą przebieg kanału kręgowego w przestrzeni 3D.
-    \item \textbf{Lokalna analiza geometrii kręgu} -- dla każdego kręgu system wyznacza lokalny układ współrzędnych
-    \item \textbf{Ekstrakcja przekrojów 2D i detekcja punktów charakterystycznych} - algorytm dokonuje próbkowania (resampling) wolumenu do płaszczyzny strzałkowej każdego kręgu
+    \item \textbf{Lokalna analiza geometrii kręgu} -- dla każdego kręgu system wyznacza lokalny układ współrzędnych.
+    \item \textbf{Ekstrakcja przekrojów 2D} -- algorytm dokonuje próbkowania (resampling) wolumenu do płaszczyzny strzałkowej każdego kręgu.
     \item \textbf{Wyznaczenie punktów charakterystycznych} -- algorytm określa cztery narożne punkty trzonów kręgów
     \item \textbf{Automatyczny pomiar kąta Cobba} -- system oblicza kąt Cobba pomiędzy dowolnymi parami kręgów oraz identyfikuje parę kręgów o największej deformacji.
+    \item \textbf{Określenie strony skrzywienia} -- system klasyfikuje skrzywienie jako prawo- lub lewostronne.
     \item \textbf{Wizualizacja i eksport wyników} -- system musi generować dane wynikowe i pośrednie w formacie umożliwiającym ich wizualną weryfikację przez lekarza (np. pliki znaczników JSON kompatybilne z oprogramowanie 3D Slicer), zawierające punkty, linie pomiarowe oraz wektory.
 \end{itemize}
 
 Wymagania niefunkcjonalne:
 \begin{itemize}
-    \item \textbf{Odporność na nieciągłość danych} -- algorytm powinien radzić sobie z przerwami w segmentacji kanału kręgowego
-    \item \textbf{Powtarzalność wyników} -- dla tych samych danych wejściowych algorytm musi zwracać zawsze ten sam wynik pomiarowy
+    \item \textbf{Odporność na nieciągłość danych} -- algorytm powinien radzić sobie z przerwami w segmentacji kanału kręgowego.
+    \item \textbf{Powtarzalność wyników} -- dla tych samych danych wejściowych algorytm musi zwracać zawsze ten sam wynik pomiarowy.
+    \item \textbf{Pełna automatyzacja} -- proces pomiaru musi przebiegać bez interakcji manualnej, w szczególności bez ręcznego wskazywania kręgów krańcowych przez użytkownika.
     \item \textbf{Efektywność czasowa przetwarzania} -- algorytm musi charakteryzować się niską złożonością obliczeniową, umożliwiając przetworzenie pojedynczego badania w czasie akceptowalnym klinicznie.
-    \item \textbf{Interoperacyjność} -- rozwiązanie powinno wykorzystywać otwarte standardy wymiany danych medycznych, co pozwala na łatwą integrację z istniejącymi narzędziami badawczymi i przeglądarkami DICOM.
+    \item \textbf{Interoperacyjność} -- rozwiązanie powinno wykorzystywać otwarte standardy wymiany danych medycznych, co pozwala na łatwą integrację z istniejącymi narzędziami badawczymi oraz narzędziami do wizualizacji i analizy obrazów medycznych (np. 3D Slicer).
 \end{itemize}
 Zdefiniowane powyżej wymagania stanowią podstawę do opracowania metodyki oraz implementacji algorytmu, które zostaną przedstawione w kolejnych rozdziałach pracy.
 
@@ -110,12 +112,13 @@ W niniejszym rozdziale przedstawiono opis zaprojektowanego algorytmu. Proces prz
 \end{figure}
 
 \subsection{Wyznaczenie i rekonstrukcja linii środkowej kanału kręgowego}
+\label{subsec:centerline}
 Pierwszym krokiem algorytmu jest wyznaczenie szkieletu kanału kręgowego.
-Metoda zaczyna się od połączenia trzech części segmentacji odpowiadającym kanałowi kręgowemu, kanału kręgowego, końskiego ogona  oraz worka oponowego, w jedną.
-W ten sposób obszar kanału kręgowego jest bardziej odporny na `przerwy` w segmentacji, zwiększa obszar do późniejszego procesowania.
+Metoda zaczyna się od połączenia w jedną całość trzech etykiet segmentacji składających się na kanał kręgowy: właściwego kanału kręgowego, ogona końskiego oraz worka oponowego.
+W ten sposób obszar kanału kręgowego staje się bardziej odporny na „przerwy" w segmentacji, co zwiększa obszar dostępny do dalszego przetwarzania.
 
-Następnym krokiem jest przekazanie złączonych etykiet do funkcji  \texttt{skeletonize} z argumentem \texttt{method=lee} z pakietu \texttt{scikit-image} w celu wyznaczenie szkieletu kanału kręgowego\cite{scikit-skeletonize}.
-Następnie za zwróconym zestawie pikseli (szkielecie) dokonano przepróbkowania (resamplingu) do przestrzeni wejściowego kanału kręgowego.
+Następnym krokiem jest przekazanie złączonych etykiet do funkcji \texttt{skeletonize} z argumentem \texttt{method='lee'} z pakietu \texttt{scikit-image} w celu wyznaczenia szkieletu kanału kręgowego\cite{scikit-skeletonize}.
+Następnie na zwróconym zbiorze pikseli (szkielecie) dokonano przepróbkowania (resamplingu) do przestrzeni wejściowego kanału kręgowego.
 Kolejnym krokiem jest przeiterowanie się przez całą długość wektora Z (wysokość) przepróbkowanego szkieletu kanału kręgowego z krokiem równym grubości warstwy przestrzeni i wyznaczenie punktów kanału kręgowego.
 Niekiedy segmentacja kanału kręgowego mimo połączenia trzech etykiet dalej jest niepełna bądź nieciągła, w tym przypadku wykrywane są brakujące fragmenty i uzupełniane.
 \begin{figure}[H]
@@ -136,7 +139,8 @@ Niekiedy segmentacja kanału kręgowego mimo połączenia trzech etykiet dalej j
     \caption{Wyznaczone punkty kanału kręgowego przed uzupełnieniem brakujących fragmentów.}
 \end{figure}
 
-Algorytm odporny jest na brakujące fragmenty segmentacji, które mogą wyniknąć z lokalnie słabego sygnału danych wejściowych, artefaktów obrazowania, lub błedu narzędzia segmentującego. Aby umożliwić wyznaczenie ciągłej krzywizny kręgosłupa niezbędnej do pomiaru kątu Cobba, zastosowano algorytm aproksymacji brakujących danych.
+Algorytm odporny jest na brakujące fragmenty segmentacji, które mogą wyniknąć z lokalnie słabego sygnału danych wejściowych, artefaktów obrazowania lub błędu narzędzia segmentującego.
+Aby umożliwić wyznaczenie ciągłej krzywizny kręgosłupa, niezbędnej do pomiaru kąta Cobba, zastosowano algorytm aproksymacji brakujących danych.
 Zaimplementowana funkcja \texttt{approximate} realizuje zadanie uzupełniania brakujących danych przestrzennych (ubytków w segmentacji) przy wykorzystaniu interpolacji funkcjami sklejanymi trzeciego stopnia (ang. \textit{Cubic Spline Interpolation}).\cite{cubic-spline}
 
 Przed przystąpieniem do aproksymacji kształtu kanału kręgowego, konieczna jest identyfikacja miejsc, w których proces segmentacji nie zwrócił wyników (tzw. luk w danych). W tym celu opracowano algorytm analizy dystrybucji punktów wzdłuż osi podłużnej (Z) kręgosłupa.
@@ -149,11 +153,12 @@ Niech $P = \{p_0, p_1, \dots, p_N\}$ będzie zbiorem uporządkowanych punktów (
 
 Zdefiniowano parametry systemowe:
 \begin{itemize}
-    \item $h_{step}$ – oczekiwany krok próbkowania, odpowiadający grubości warstwy badawczej (Slice Thickness) lub odstępowi między skanami (w implementacji przyjęto $h_{step} = 3.2$ mm).
-    \item $T_{thresh}$ – próg detekcji błędu, definiujący minimalną odległość uznawaną za lukę w danych.
+    \item $h_{step}$ –- oczekiwany krok próbkowania, odpowiadający grubości warstwy badawczej (Slice Thickness) lub odstępowi między skanami (w implementacji przyjęto $h_{step} = 3.2$ mm).
+    \item $T_{thresh}$ –- próg detekcji błędu, definiujący minimalną odległość uznawaną za lukę w danych.
 \end{itemize}
 
-Jeśli wyznaczona odległość $\Delta z_i$ przekracza próg $T_{thresh}$, algorytm klasyfikuje ten obszar jako ubytek segmentacji. Liczba brakujących warstw $k_{miss}$ estymowana jest na podstawie ilorazu całkowitego odległości i oczekiwanego kroku:
+Jeśli wyznaczona odległość $\Delta z_i$ przekracza próg $T_{thresh}$, algorytm klasyfikuje ten obszar jako ubytek segmentacji.
+Liczba brakujących warstw $k_{miss}$ estymowana jest na podstawie ilorazu całkowitego odległości i oczekiwanego kroku:
 
 \begin{equation}
     k_{miss} = \left\lfloor \frac{\Delta z_i}{h_{step}} \right\rfloor
@@ -165,16 +170,20 @@ Na podstawie wartości $k_{miss}$, algorytm buduje dwie nowe przestrzenie indeks
     \item \textbf{Indeksy brakujące ($I_{miss}$):} wirtualne znaczniki miejsc, które wymagają uzupełnienia.
 \end{enumerate}
 
-Ze względu na złożoną geometrię kręgosłupa w przestrzeni 3D, linia środkowa kanału kręgowego nie może być opisana jako prosta funkcja jednej zmiennej. Zamiast tego zdefiniowano ją jako krzywą wektorową $\mathbf{C}(t)$, zależną od znormalizowanego parametru $t$:
+Ze względu na złożoną geometrię kręgosłupa w przestrzeni 3D, linia środkowa kanału kręgowego nie może być opisana jako prosta funkcja jednej zmiennej.
+Zamiast tego zdefiniowano ją jako krzywą wektorową $\mathbf{C}(t)$, zależną od znormalizowanego parametru $t$:
 
 \begin{equation}
     \mathbf{C}(t) = \begin{bmatrix}
                         x(t) \\ y(t) \\ z(t)
     \end{bmatrix}, \quad \text{dla} \quad t \in [0, 1]
 \end{equation}
-gdzie parametr $t$ reprezentuje znormalizowaną pozycję wzdłuż długiej osi kręgosłupa. W implementacji parametr ten uzyskano poprzez liniowe mapowanie indeksów dostępnych warstw (\texttt{np.linspace}).
+gdzie parametr $t$ reprezentuje znormalizowaną pozycję wzdłuż długiej osi kręgosłupa.
+W implementacji parametr ten uzyskano poprzez liniowe mapowanie indeksów dostępnych warstw (\texttt{np.linspace}).
 
-Problem interpolacji 3D rozłożono na trzy niezależne podproblemy jednowymiarowe. Dla każdej współrzędnej przestrzennej ($\xi \in \{x, y, z\}$) skonstruowano funkcję sklejaną $S_\xi(t)$. W każdym podprzedziale $[t_i, t_{i+1}]$ funkcja ta jest wielomianem trzeciego stopnia:
+Problem interpolacji 3D rozłożono na trzy niezależne podproblemy jednowymiarowe.
+Dla każdej współrzędnej przestrzennej ($\xi \in \{x, y, z\}$) skonstruowano funkcję sklejaną $S_\xi(t)$.
+W każdym podprzedziale $[t_i, t_{i+1}]$ funkcja ta jest wielomianem trzeciego stopnia:
 
 \begin{equation}
     S_\xi(t) = a_i + b_i(t - t_i) + c_i(t - t_i)^2 + d_i(t - t_i)^3
@@ -182,13 +191,15 @@ Problem interpolacji 3D rozłożono na trzy niezależne podproblemy jednowymiaro
 
 Współczynniki $a_i, b_i, c_i, d_i$ wyznaczono tak, aby zapewnić ciągłość funkcji $S(t)$ oraz jej pierwszej $S'(t)$ i drugiej $S''(t)$ pochodnej w węzłach interpolacji.
 
-W kodzie zastosowano naturalne warunki brzegowe (\texttt{bc\_type='natural'}), co jest kluczowe dla uniknięcia nienaturalnych wygięć krzywej na krańcach badanego odcinka. Matematycznie oznacza to zerowanie się drugiej pochodnej (krzywizny) na końcach przedziału:
+W kodzie zastosowano naturalne warunki brzegowe (\texttt{bc\_type='natural'}), co jest kluczowe dla uniknięcia nienaturalnych wygięć krzywej na krańcach badanego odcinka.
+Matematycznie oznacza to zerowanie się drugiej pochodnej (krzywizny) na końcach przedziału:
 
 \begin{equation}
     S''_\xi(0) = 0 \quad \text{oraz} \quad S''_\xi(1) = 0
 \end{equation}
 
-Dla każdego brakującego fragmentu danych o indeksie $k_{miss}$, wyznaczono odpowiadającą mu wartość parametru $t_{miss}$ poprzez interpolację liniową znanych indeksów. Ostateczne współrzędne punktu zrekonstruowanego $P_{rec}$ obliczono jako:
+Dla każdego brakującego fragmentu danych o indeksie $k_{miss}$, wyznaczono odpowiadającą mu wartość parametru $t_{miss}$ poprzez interpolację liniową znanych indeksów.
+Ostateczne współrzędne punktu zrekonstruowanego $P_{rec}$ obliczono jako:
 
 \begin{equation}
     P_{rec} = \left( S_x(t_{miss}), \; S_y(t_{miss}), \; S_z(t_{miss}) \right)
@@ -204,16 +215,19 @@ Tak uzyskane punkty scalono z danymi oryginalnymi i posortowano, uzyskując cią
     \label{fig:scoliosis-filled-gaps}
 \end{figure}
 
-Po etapie rekonstrukcji ubytków, zbiór punktów reprezentujących kanał kręgowy posiada ciągłość, jednak dystrybucja punktów w przestrzeni może być niejednorodna. Aby zapewnić stałą rozdzielczość przestrzenną niezbędną do precyzyjnych pomiarów geometrycznych, przeprowadzono proces reparametryzacji i zagęszczenia próbkowania.
+Po etapie rekonstrukcji ubytków, zbiór punktów reprezentujących kanał kręgowy posiada ciągłość, jednak dystrybucja punktów w przestrzeni może być niejednorodna.
+Aby zapewnić stałą rozdzielczość przestrzenną niezbędną do precyzyjnych pomiarów geometrycznych, przeprowadzono proces reparametryzacji i zagęszczenia próbkowania.
 
 Algorytm realizowany jest w trzech krokach:
 
-W pierwszej kolejności usuwane są punkty, które dublują się lub znajdują się w odległości mniejszej niż błąd numeryczny ($\epsilon = 10^{-6}$). Jest to krok niezbędny dla stabilności numerycznej algorytmów interpolacyjnych, które wymagają ściśle rosnącego argumentu funkcji.
+W pierwszej kolejności usuwane są punkty, które dublują się lub znajdują się w odległości mniejszej niż błąd numeryczny ($\epsilon = 10^{-6}$).
+Jest to krok niezbędny dla stabilności numerycznej algorytmów interpolacyjnych, które wymagają ściśle rosnącego argumentu funkcji.
 \begin{equation}
     P_{filtered} = \{ p_i \in P : \| p_i - p_{i-1} \| > \epsilon \}
 \end{equation}
 
-W przeciwieństwie do poprzedniego etapu, gdzie parametrem była oś $Z$, tutaj zastosowano naturalną parametryzację krzywej w przestrzeni 3D. Zdefiniowano parametr $s$, będący skumulowaną długością euklidesową wzdłuż łamanej łączącej kolejne punkty (ang. \textit{cumulative chord length}):
+W przeciwieństwie do poprzedniego etapu, gdzie parametrem była oś $Z$, tutaj zastosowano naturalną parametryzację krzywej w przestrzeni 3D.
+Zdefiniowano parametr $s$, będący skumulowaną długością euklidesową wzdłuż łamanej łączącej kolejne punkty (ang. \textit{cumulative chord length}):
 
 \begin{equation}
     s_0 = 0, \quad s_k = \sum_{i=1}^{k} \| p_i - p_{i-1} \|
@@ -221,7 +235,8 @@ W przeciwieństwie do poprzedniego etapu, gdzie parametrem była oś $Z$, tutaj 
 
 Dzięki temu dziedziną funkcji interpolującej staje się rzeczywista długość krzywej, a nie współrzędna kartezjańska, co pozwala na poprawne odwzorowanie pętli i silnych skrzywień niebędących funkcjami w sensie matematycznym względem jednej osi.
 
-Na podstawie obliczonych odległości $s$, skonstruowano nowe funkcje sklejane trzeciego stopnia $C(s)$ dla każdej współrzędnej. Następnie dokonano ponownego próbkowania (resampling) krzywej, generując nowy wektor parametrów $s'_{j}$ rozmieszczonych w idealnie równych odstępach:
+Na podstawie obliczonych odległości $s$, skonstruowano nowe funkcje sklejane trzeciego stopnia $C(s)$ dla każdej współrzędnej.
+Następnie dokonano ponownego próbkowania (resampling) krzywej, generując nowy wektor parametrów $s'_{j}$ rozmieszczonych w idealnie równych odstępach:
 
 \begin{equation}
     s'_{j} = j \cdot \frac{s_{max}}{M}, \quad \text{dla} \quad j = 0, \dots, M
@@ -242,27 +257,36 @@ W rezultacie uzyskano zbiór punktów $P_{new} = C(s')$, który charakteryzuje s
     \label{fig:scoliosis-equal-distribution}
 \end{figure}
 
-Po uzyskaniu kanału kręgowego z równomiernym rozmieszeniem punktów następnym krokiem jest wyznaczenie lokalnego układu współrzędnych każdego kręgu w celu wyeliminowania błędów pomiarowych wynikających z naturalnej krzywizny kręgosłupa (lordozy lędźwiowej) oraz potencjalnej rotacji kręgów.
+\subsection{Wyznaczenie lokalnego układu współrzędnych kręgu}
+\label{subsec:local-frame}
 
-Pierwszym etapem analizy geometrycznej każdego kręgu jest wyznaczenie jego środka masy (centroidu). Dla każdej odizolowanej etykiety kręgu $V$ obliczane są statystyki kształtu przy użyciu filtru \textit{LabelShapeStatisticsImageFilter}. Centroid trzonu kręgu $C_{body}$ jest wyznaczany jako średnia arytmetyczna współrzędnych wszystkich wokseli należących do danej etykiety:
+Po uzyskaniu kanału kręgowego z równomiernym rozmieszczeniem punktów następnym krokiem jest wyznaczenie lokalnego układu współrzędnych każdego kręgu w celu wyeliminowania błędów pomiarowych wynikających z naturalnej krzywizny kręgosłupa (lordozy lędźwiowej) oraz potencjalnej rotacji kręgów.
+
+Pierwszym etapem analizy geometrycznej każdego kręgu jest wyznaczenie jego środka masy (centroidu).
+Dla każdej odizolowanej etykiety kręgu $V$ obliczane są statystyki kształtu przy użyciu filtru \textit{LabelShapeStatisticsImageFilter}.
+Centroid trzonu kręgu $C_{body}$ jest wyznaczany jako średnia arytmetyczna współrzędnych wszystkich wokseli należących do danej etykiety:
 \begin{equation}
     \label{eq:centroid}
     C_{body} = \frac{1}{N} \sum_{i=1}^{N} P_i
 \end{equation}
 gdzie $P_{i}$ oznacza wektor współrzędnych $[x,y,z]^T$ $i$-tego woksela, należącego do kręgu, a $N$ jest całkowitą liczbą wokseli składających się na tę strukturę.
 
-W celu wyznaczenia lokalnej orientacji, kręg musi zostać odniesiony do przebiegu kanału kręgowego. Realizuje to funkcja \texttt{find\_closest\_i}, która przeszukuje zbiór punktów kanału $S=\{s_1,s_2,...,s_m\}$ wyznaczonych we wcześniejszym etapie szukając punktu o minimalnej odległości euklidesowej od centroidu kręgu:
+W celu wyznaczenia lokalnej orientacji, kręg musi zostać odniesiony do przebiegu kanału kręgowego.
+Realizuje to funkcja \texttt{find\_closest\_i}, która przeszukuje zbiór punktów kanału $S=\{s_1,s_2,...,s_m\}$ wyznaczonych we wcześniejszym etapie szukając punktu o minimalnej odległości euklidesowej od centroidu kręgu:
 \begin{equation}
     \label{eq:closest_point}
     i^* = \arg \min_{i \in \{1, \dots, m\}} \| \mathbf{s}_i - \mathbf{C}_{\text{body}} \|^2
 \end{equation}
 Zastosowanie kwadratu odległości pozwala na przyspieszenie obliczeń poprzez uniknięcie operacji pierwiastkowania, nie zmieniając przy tym położenia minimum funkcji.
 
-Mając wyznaczony punkt odniesienia na kanale kręgowym, algorytm definiuje lokalne sąsiedztwo punktów (okno o rozmiarze 21 punktów), aby znaleźć lokalną krzywiznę. Orientacja pionowa $y_{vec}$ jest wyznaczana przy użyciu analizy głównych składowych (ang. \textit{Principal Component Analysis} -- PCA)\cite{pca}, z pakietu \texttt{sklearn.decomposition}. Dla lokalnego podzbioru punktów $S_{local}$ obliczana jest macierz kowariancji:
+Mając wyznaczony punkt odniesienia na kanale kręgowym, algorytm definiuje lokalne sąsiedztwo punktów (okno o rozmiarze 21 punktów), aby znaleźć lokalną krzywiznę.
+Orientacja pionowa $y_{vec}$ jest wyznaczana przy użyciu analizy głównych składowych (ang. \textit{Principal Component Analysis} -- PCA)\cite{pca}, z pakietu \texttt{sklearn.decomposition}.
+Dla lokalnego podzbioru punktów $S_{local}$ obliczana jest macierz kowariancji:
 \begin{equation}
     \text{Cov}(S_{local}) = \frac{1}{n-1} \sum_{j=1}^{n} (s_j - \bar{s})(s_j - \bar{s})^T
 \end{equation}
-gdzie $\bar{s}$ jest wartością średnią pozycji punktów w oknie. Wektor orientacji $y_{vec}$ odpowiada pierwszej składowej głównej (ang. \textit{principal component}), która wskazuje kierunek największej wariancji zbioru punktów, czyli w tym przypadku kierunek styczny do kanału kręgowego.
+gdzie $\bar{s}$ jest wartością średnią pozycji punktów w oknie.
+Wektor orientacji $y_{vec}$ odpowiada pierwszej składowej głównej (ang. \textit{principal component}), która wskazuje kierunek największej wariancji zbioru punktów, czyli w tym przypadku kierunek styczny do kanału kręgowego.
 Wyznaczony wektor jest normalizowany do jedności:
 
 \begin{equation}
@@ -270,7 +294,9 @@ Wyznaczony wektor jest normalizowany do jedności:
     \hat{y}_{vec} = \frac{\vec{y}_{vec}}{| \vec{y}_{vec} |}
 \end{equation}
 
-Ostatnim krokiem jest zapewnienie spójności zwrotu wektora. W medycznym układzie współrzędnych przyjęto konwencję, w której oś $Z$ rośnie w kierunku czaszkowym (Superior). Algorytm sprawdza składową $z$ wektora i w razie potrzeby dokonuje jego inwersji, aby wektor zawsze wskazywał kierunek dolny (inferior), zgodnie z przyjętą konwencją przebiegu osi kręgosłupa:
+Ostatnim krokiem jest zapewnienie spójności zwrotu wektora.
+W medycznym układzie współrzędnych przyjęto konwencję, w której oś $Z$ rośnie w kierunku czaszkowym (Superior).
+Algorytm sprawdza składową $z$ wektora i w razie potrzeby dokonuje jego inwersji, aby wektor zawsze wskazywał kierunek dolny (inferior), zgodnie z przyjętą konwencją przebiegu osi kręgosłupa:
 
 \begin{equation}
     \vec{y} =
@@ -288,7 +314,8 @@ Ostatnim krokiem jest zapewnienie spójności zwrotu wektora. W medycznym układ
     \label{fig:v_vec_with_points}
 \end{figure}
 
-Po ustaleniu orientacji pionowej kręgu, algorytm przystępuje do wyznaczenia wektora $z$, który w lokalnym układzie współrzędnych reprezentuje oś przednio-tylną (\textit{anterior-posterior}). Wektor $\vec{z}_{raw}$ jest definiowany jako różnica położeń między wcześniej obliczonym, w równaniu \eqref{eq:centroid}, centroidem trzonu kręgu $C_{body}$, a obliczonym w poprzedniej części algorytmu najbliższym punktem kanału kręgowego $\mathbf{s}_{i^*}$ \eqref{eq:closest_point}.
+Po ustaleniu orientacji pionowej kręgu, algorytm przystępuje do wyznaczenia wektora $z$, który w lokalnym układzie współrzędnych reprezentuje oś przednio-tylną (\textit{anterior-posterior}).
+Wektor $\vec{z}_{raw}$ jest definiowany jako różnica położeń między wcześniej obliczonym, w równaniu \eqref{eq:centroid}, centroidem trzonu kręgu $C_{body}$, a obliczonym w poprzedniej części algorytmu najbliższym punktem kanału kręgowego $\mathbf{s}_{i^*}$ \eqref{eq:closest_point}.
 
 \begin{equation}
     \vec{z}_{raw} = \mathbf{s}_{i^*} - C_{body}
@@ -309,9 +336,11 @@ Wyznaczony wektor podobnie jak w \eqref{eq:normalize_y} normalizowany jest do je
     \label{fig:z_vec_with_points}
 \end{figure}
 
-Ostatnim krokiem, mając wyznaczone dwa wektory jednostkowe $y$ (\eqref{eq:normalize_y}, styczny do kanału kręgowego w sąsiedztwie kręgu) oraz $z$ (\eqref{eq:normalize_z}, łączący środek trzonu z kanałem kręgowym), jest wyznaczenie trzeciego wektora $x$. Wektor ten odpowiada osi boczno-przyśrodkowej (ang. \textit{medial-lateral}), czyli orientacji lewo-prawo.
+Ostatnim krokiem, mając wyznaczone dwa wektory jednostkowe $y$ (\eqref{eq:normalize_y}, styczny do kanału kręgowego w sąsiedztwie kręgu) oraz $z$ (\eqref{eq:normalize_z}, łączący środek trzonu z kanałem kręgowym), jest wyznaczenie trzeciego wektora $x$.
+Wektor ten odpowiada osi boczno-przyśrodkowej (ang. \textit{medial-lateral}), czyli orientacji lewo-prawo.
 
-Aby zapewnić idealną prostopadłość wszystkich osi, co jest niezbędne do poprawnego przepróbkowania obrazu bez wprowadzania deformacji geometrycznych, zastosowano operację iloczynu wektorowego. Wektor $\vec{x}_{raw}$ jest wyznaczony jako iloczyn wektorowy osi grzbietowej oraz pionowej.
+Aby zapewnić idealną prostopadłość wszystkich osi, co jest niezbędne do poprawnego przepróbkowania obrazu bez wprowadzania deformacji geometrycznych, zastosowano operację iloczynu wektorowego.
+Wektor $\vec{x}_{raw}$ jest wyznaczony jako iloczyn wektorowy osi grzbietowej oraz pionowej.
 
 \begin{equation} \label{eq:cross_product_x} \vec{x}_{raw} = \vec{z} \times \vec{y}
 \end{equation}
@@ -338,13 +367,22 @@ Po wyznaczeniu $\vec{x}$, w celu zagwarantowania dokładnej ortogonalności bazy
 
 Krok ten eliminuje numeryczne błędy akumulowane podczas wyznaczania kolejnych wektorów bazy, zapewniając idealną ortogonalność układu $\{\vec{x}, \vec{y}, \vec{z}\}$.
 
-Wyznaczenie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$ pozwala na uniezależnienie procesu analizy od globalnego układu współrzędnych skanera DICOM. Następnym krokiem algorytmu jest wykorzystanie tej macierzy rotacji do przeprowadzenia operacji przepróbkowania (ang. \textit{resampling}). Proces ten ma na celu przekształcenie trójwymiarowej chmury wokseli w serię zorientowanych diagnostycznie obrazów dwuwymiarowych. Takie podejście pozwala na sprowadzenie złożonej geometrii przestrzennej kręgosłupa do płaszczyzny pomiarowej, na której możliwe jest zastosowanie klasycznych metod wizji komputerowej.
-Przed przystąpieniem do przepróbkowania obrazu, konieczne jest wyznaczenie fizycznego punktu początkowego nowej siatki obrazu (ang. \textit{origin}). Punkt ten, oznaczony w algorytmie jako \texttt{anchor}, jest przesunięty względem centroidu kręgu $C_{body}$, aby zapewnić centralne położenie struktury na wynikowym obrazie o wymiarach \texttt{250×250} pikseli.
+\subsection{Ekstrakcja przekroju 2D i punktów narożnych trzonu}
+\label{subsec:corner-points}
+
+Wyznaczenie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$ pozwala na uniezależnienie procesu analizy od globalnego układu współrzędnych badania.
+Następnym krokiem algorytmu jest wykorzystanie tej macierzy rotacji do przeprowadzenia operacji przepróbkowania (ang. \textit{resampling}).
+Proces ten ma na celu przekształcenie trójwymiarowej chmury wokseli w serię zorientowanych diagnostycznie obrazów dwuwymiarowych.
+Takie podejście pozwala na sprowadzenie złożonej geometrii przestrzennej kręgosłupa do płaszczyzny pomiarowej, na której możliwe jest zastosowanie klasycznych metod wizji komputerowej.
+
+Przed przystąpieniem do przepróbkowania obrazu konieczne jest wyznaczenie fizycznego punktu początkowego nowej siatki obrazu (ang. \textit{origin}).
+Punkt ten, oznaczony w algorytmie jako \texttt{anchor}, jest przesunięty względem centroidu kręgu $C_{body}$ tak, aby struktura trzonu w całości znalazła się w polu widzenia wynikowego obrazu o wymiarach \texttt{250×250} pikseli.
 
 \begin{equation} \label{eq:anchor} P_{anchor} = C_{body} - 50\vec{x} - 50\vec{y}
 \end{equation}
 Przesunięcie o 50mm w kierunkach osi $\vec{x}$ i $\vec{y}$ pozycjonuje punkt początkowy tak, aby trzon kręgu znajdował się w polu widzenia algorytmu detekcji konturów.
-Aby przekształcić dane z globalnej siatki wokseli do lokalnej płaszczyzny, konstruowana jest macierz kierunkowa (ang. \textit{Direction Matrix}) $\textbf{D}$. Składa się ona z wektorów bazowych lokalnego układu współrzędnych.
+Aby przekształcić dane z globalnej siatki wokseli do lokalnej płaszczyzny, konstruowana jest macierz kierunkowa (ang. \textit{Direction Matrix}) $\textbf{D}$.
+Składa się ona z wektorów bazowych lokalnego układu współrzędnych.
 
 \begin{equation} \label{eq:direction_matrix} \mathbf{D} = \begin{bmatrix}
                                                               x_0 & y_0 & z_0 \\ x_1 & y_1 & z_1 \\ x_2 & y_2 & z_2
@@ -352,17 +390,23 @@ Aby przekształcić dane z globalnej siatki wokseli do lokalnej płaszczyzny, ko
 \end{equation}
 gdzie $[x_i, y_i, z_i]^T$ są składowymi znormalizowanych wektorów lokalnej bazy.
 
-Właściwa ekstrakcja przekroju realizowana jest przy użyciu filtru \textit{ResampleImageFilter} z biblioteki SimpleITK. Parametry wyjściowe obrazu zdefiniowano następująco: \begin{itemize}
-                                                                                                                                                                                \item \textbf{Rozmiar:} 250×250 pikseli. \item \textbf{Rozdzielczość (Spacing):} 0.5×0.5 mm na piksel, co pozwala na zachowanie wysokiej precyzji pomiarowej. \item \textbf{Interpolacja:} Metoda najbliższego sąsiada (\textit{Nearest Neighbor}).
+Właściwa ekstrakcja przekroju realizowana jest przy użyciu filtru \textit{ResampleImageFilter} z biblioteki SimpleITK.
+Parametry wyjściowe obrazu zdefiniowano następująco:
+\begin{itemize}
+    \item \textbf{Rozmiar:} 250×250 pikseli.
+    \item \textbf{Rozdzielczość (Spacing):} 0.5×0.5 mm na piksel, co pozwala na zachowanie wysokiej precyzji pomiarowej.
+    \item \textbf{Interpolacja:} Metoda najbliższego sąsiada (\textit{Nearest Neighbor}).
 \end{itemize}
-Wybór interpolacji typu \textit{Nearest Neighbor} jest krytyczny, ponieważ przetwarzane dane wejściowe są mapą etykiet (segmentacją). Zastosowanie interpolacji liniowej doprowadziłoby do powstania nieistniejących wartości pośrednich na granicach struktur, co uniemożliwiłoby poprawną detekcję krawędzi binarnych.
+Wybór interpolacji typu \textit{Nearest Neighbor} jest krytyczny, ponieważ przetwarzane dane wejściowe są mapą etykiet (segmentacją).
+Zastosowanie interpolacji liniowej doprowadziłoby do powstania nieistniejących wartości pośrednich na granicach struktur, co uniemożliwiłoby poprawną detekcję krawędzi binarnych.
 Dla każdego piksela (u,v) na wynikowym obrazie 2D, jego współrzędne w fizycznej przestrzeni 3D ($P_{phys}$) obliczane są zgodnie z przekształceniem afinicznym:
 
 \begin{equation} \label{eq:resampling_math}
     P_{phys} = P_{anchor} + \mathbf{D} \cdot \begin{bmatrix} u \cdot s_u \\ v \cdot s_v \\ 0 \end{bmatrix}
 \end{equation}
 
-gdzie $s_u,s_v$ to wartości odstępu między pikselami (\textit{spacing}). Wynikiem tej operacji jest obraz \texttt{resampled}, który stanowi bazę dla kolejnego etapu — ekstrakcji konturu trzonu kręgu.
+gdzie $s_u,s_v$ to wartości odstępu między pikselami (\textit{spacing}).
+Wynikiem tej operacji jest obraz \texttt{resampled}, który stanowi bazę dla kolejnego etapu -- ekstrakcji konturu trzonu kręgu.
 
 \begin{figure}[H]
     \centering
@@ -380,7 +424,6 @@ gdzie $s_u,s_v$ to wartości odstępu między pikselami (\textit{spacing}). Wyni
     \label{fig:scoliosis-anterior-plane}
     \end{subfigure}
     \caption{Wizualizacja trójwymiarowa pojedynczego kręgu lędźwiowego wraz z nałożoną lokalną płaszczyzną przekroju strzałkowego, wyznaczoną na podstawie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$}
-
 \end{figure}
 
 \begin{figure}[H]
@@ -401,22 +444,23 @@ Wykorzystano element strukturalny o rozmiarze \texttt{5x5} pixeli co pozwala na 
 \begin{equation}
     I_{cleaned} = (I_{flat} \circ B)
 \end{equation}
-gdzie B to kwadratowa macierz binarna, a symbol $\circ$ oznacza operację otwarcia.
+gdzie $B$ to kwadratowa macierz binarna, a symbol $\circ$ oznacza operację otwarcia.
 
-Następnie, w celu precyzyjnego wyznaczenia granic trzonu, zastosowano detektor krawędzi Canny’ego\cite{canny} (z biblioteki \texttt{cv2.Canny(image, 0, 1)}, gdzie 0 i 1 to wartości graniczne dla obrazu binarnego trzonu kręgu i tła między którymi wyznaczona będzie granica).
+Następnie, w celu precyzyjnego wyznaczenia granic trzonu, zastosowano detektor krawędzi Canny'ego\cite{canny} (z biblioteki \texttt{cv2.Canny(image, 0, 1)}, gdzie 0 i 1 to wartości graniczne dla obrazu binarnego trzonu kręgu i tła, między którymi wyznaczona będzie granica).
 Pozwala on na zredukowanie informacji o całej masie kręgu do zbioru punktów brzegowych o szerokości jednego piksela.
 
-Z wykrytych krawędzi ekstrahowany jest kontur zewnętrzny (z biblioteki \texttt{cv2.findContours(image, cv2.RETR\_EXTERNAL, cv2.CHAIN\_APPROX\_SIMPLE)} z parametrami \texttt{RETR\_EXTERNAL} do wyznaczenia tylko zewnętrznych konturów, oraz \texttt{CHAIN\_APPROX\_SIMPLE} do wykrycia tylko niezbednych puntków).
+Z wykrytych krawędzi ekstrahowany jest kontur zewnętrzny (z biblioteki \texttt{cv2.findContours(image, cv2.RETR\_EXTERNAL, cv2.CHAIN\_APPROX\_SIMPLE)}, z parametrami \texttt{RETR\_EXTERNAL} do wyznaczenia tylko zewnętrznych konturów oraz \texttt{CHAIN\_APPROX\_SIMPLE} do wykrycia tylko niezbędnych punktów).
 
-Aby zniwelować wpływ lokalnych nierówności powierzchni trzonu kręgowego, algorytm wyznacza otoczkę wypukłą (ang.\textit{Convex Hull}) metodą z biblioteki \texttt{cv2.convexHull(contours)}.
+Aby zniwelować wpływ lokalnych nierówności powierzchni trzonu kręgowego, algorytm wyznacza otoczkę wypukłą (ang. \textit{Convex Hull}) metodą z biblioteki \texttt{cv2.convexHull(contours)}.
 
-Następnie zastosowano algorytm \textbf{Douglasa-Peuckera}\cite{douglas-peucker} (metoda \texttt{cv2.approxPolyDP(hull, arcLength * 0.01, True)} - gdzie \texttt{arcLength * 0.01} to epsilon aproksymacji równy 1\% długości konturu -- im mniejszy, tym bardziej wynikowy wielokąt przypomina oryginał, a trzeci parametr informuje, że krzywa ma być zamkniętą pętlą), który dokonuje aproksymacji wielokątowej konturu.
+Następnie zastosowano algorytm \textbf{Douglasa-Peuckera}\cite{douglas-peucker} (metoda \texttt{cv2.approxPolyDP(hull, arcLength * 0.01, True)} -- gdzie \texttt{arcLength * 0.01} to epsilon aproksymacji równy 1\% długości konturu; im mniejszy, tym bardziej wynikowy wielokąt przypomina oryginał, a trzeci parametr informuje, że krzywa ma być zamkniętą pętlą), który dokonuje aproksymacji wielokątowej konturu.
 Proces ten redukuje liczbę punktów opisujących kształt, pozostawiając jedynie te najbardziej istotne z punktu widzenia geometrii struktury.
 
 Ostatnim etapem analizy geometrycznej jest selekcja czterech kluczowych punktów narożnych z uzyskanego wielokąta aproksymacyjnego.
-W tym celu zaimplementowano algorytm oparty na analizie sumy i różnicy współrzędnych $[x,y]$ punktów konturu, co pozwala na ich jednoznaczną klasyfikację topologiczną (lewy górny, prawy górny, lewy dolny, prawy dolny). Metoda ta jest poprawna dla prostokątnych i quasi-prostokątnych kształtów (takich jak trzon kręgu).
+W tym celu zaimplementowano algorytm oparty na analizie sumy i różnicy współrzędnych $[x,y]$ punktów konturu, co pozwala na ich jednoznaczną klasyfikację topologiczną (lewy górny, prawy górny, lewy dolny, prawy dolny).
+Metoda ta jest poprawna dla prostokątnych i quasi-prostokątnych kształtów (takich jak trzon kręgu).
 
-Lewy górny róg ($P_{TL}$) oraz prawy dolny rów ($P_{BR}$) są identyfikowane poprzez minimalizację i maksymalizację sumy współrzędnych:
+Lewy górny róg ($P_{TL}$) oraz prawy dolny róg ($P_{BR}$) są identyfikowane poprzez minimalizację i maksymalizację sumy współrzędnych:
 \begin{equation}
     P_{TL} = argmin(x_i + y_i), P_{BR} = argmax(x_i + y_i)
 \end{equation}
@@ -442,13 +486,14 @@ Prawy górny róg ($P_{TR}$) oraz lewy dolny róg ($P_{BL}$) są wyznaczane popr
 \end{figure}
 
 Wyznaczone punkty narożne reprezentują położenie struktur anatomicznych w układzie współrzędnych macierzy pikseli.
-Ze względu na fakt, że analiza obrazów DICOM wymaga uzyskania wyników o znaczeniu klinicznym, niezbędne jest przejście z jednostek bezwzlędnych (pikseli) na jednostki fizyczne (milimetry).
+Ze względu na fakt, że analiza danych obrazowych wymaga uzyskania wyników o znaczeniu klinicznym, niezbędne jest przejście z jednostek bezwzględnych (pikseli) na jednostki fizyczne (milimetry).
 Następnym etapem algorytmu jest zatem transformacja uzyskanych współrzędnych do trójwymiarowej przestrzeni lokalnego przekroju anatomicznego, zdefiniowanego we wcześniejszych etapach algorytmu:
 \begin{equation}
     P_{\text{local,3D}} = \mathbf{T}_{\text{plane}} \cdot P_{\text{index}}
-\end{equation}gdzie $T_{plane}$ to macierz transformacji zdefiniowana dla zorientowanego lokalnie obrazu przekroju \eqref{eq:direction_matrix}.
+\end{equation}
+gdzie $T_{plane}$ to macierz transformacji zdefiniowana dla zorientowanego lokalnie obrazu przekroju \eqref{eq:direction_matrix}.
 Operacja ta, zaimplementowana jest jako \texttt{TransformContinuousIndexToPhysicalPoint} z biblioteki \texttt{SimpleITK}\cite{sitk}.
-Dzięki temu uzyskane punkty $P_{start\_top}$, $P_{end\_top}$, $P_{start\_bot}$, $P_{end\_bot}$ posiadają współrzędne wyrażone w milimetrach, ale są one ścisle zablokowane na płaszczyźnie, która reprezentuję anatomie danego kręgu.
+Dzięki temu uzyskane punkty $P_{start\_top}$, $P_{end\_top}$, $P_{start\_bot}$, $P_{end\_bot}$ posiadają współrzędne wyrażone w milimetrach, ale są one ściśle zablokowane na płaszczyźnie, która reprezentuję anatomię danego kręgu.
 
 \begin{figure}[H]
     \centering
@@ -468,7 +513,8 @@ Dzięki temu uzyskane punkty $P_{start\_top}$, $P_{end\_top}$, $P_{start\_bot}$,
     \caption{Przestrzenna wizualizacja wyników ekstrakcji punktów narożnych trzonu kręgu w lokalnym układzie współrzędnych płaszczyzny przekroju. Widoczne dopasowanie punktów do krawędzi struktury anatomicznej po transformacji z układu 2D do przestrzeni 3D.}
 \end{figure}
 
-
+\subsection{Pomiar kąta Cobba}
+\label{subsec:cobb}
 Po wyznaczeniu punktów narożnych dla każdego kręgu, algorytm przystępuje do finalnej fazy: wyznaczenia wspólnej płaszczyzny dla analizowanych par kręgów oraz obliczenia finalnej wartości kąta skrzywienia.
 Ze względu na to, że kręgosłup w skoliozie ulega rotacji w trzech płaszczyznach, bezpośrednie rzutowanie punktów na standardowe płaszczyzny układu współrzędnych pacjenta (np. czołową) mogłoby prowadzić do niepoprawnego wyliczenia kąta.
 Algorytm wykorzystuje metodę SVD (ang. \textit{Singular Value Decomposition}) do znalezienia płaszczyzny najlepiej dopasowanej do zbioru punktów narożnych analizowanej pary kręgów (górnego i dolnego).
@@ -480,7 +526,8 @@ Następnie dokonuje się centrowania danych poprzez odjęcie centroidu od każde
 \begin{equation}
     X_i = p_i - \bar{p}
 \end{equation}
-Zcentrowane punkty tworzą macierz $A \in \mathbb{R}^{n\times3}$. Dekompozycja SVD macierzy $A$ zadana jest wzorem:
+Zcentrowane punkty tworzą macierz $A \in \mathbb{R}^{n\times3}$.
+Dekompozycja SVD macierzy $A$ zadana jest wzorem:
 \begin{equation}
     A = U \Sigma V^T
 \end{equation}
@@ -488,9 +535,8 @@ gdzie $V^T$ jest macierzą ortogonalną, której wiersze są wektorami własnymi
 Wektor normalny $n$ szukanej płaszczyzny odpowiada wierszowi macierzy $V^T$, który jest związany z najmniejszą wartością osobliwą w macierzy $\Sigma$.
 Wektor ten wskazuje kierunek, w którym wariancja danych jest najmniejsza, co matematycznie definiuje kierunek normalny do płaszczyzny najlepiej dopasowanej w sensie najmniejszych kwadratów odległości ortogonalnych.
 
-Mając wyznaczony centroid $\bar{p}$ (pełniący rolę punktu zakotwiczenia płaszczyzny) oraz znormalizowany wektor normalny $n$, algorytm dokonuje rzutowania każdego punktu $p$ na płaszczyznę.
-Dzięki temu zabiegowi, wszystkie punkty narożne analizowanej pary kręgów zostają sprowadzone do wspólnego układu współrzędnych 2D (zakotwiczonego w 3D), co niweluje błędy i pozwala na poprawną implementację klinicznej definicji kąta Cobba.
-
+Sama dekompozycja SVD dostarcza jedynie wektora normalnego $n$, prostopadłego do płaszczyzny pomiarowej.
+Aby zdefiniować ortonormalną bazę $\{\vec{x}_{plane}, \vec{y}_{plane}\}$ rozpinającą tę płaszczyznę, wykorzystano dodatkowo kierunek przebiegu kręgosłupa $\vec{s}$, wyznaczony jako różnica środków geometrycznych chmur punktów narożnych kręgu górnego ($\bar{p}_{upper}$) i dolnego ($\bar{p}_{lower}$):
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
