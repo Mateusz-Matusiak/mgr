@@ -598,3 +598,33 @@ Obliczenia kąta Cobba wykonywane są dla wszystkich par kręgów $(k_i,\, k_j)$
 \end{equation}
 
 Wynikiem działania algorytmu jest wartość kąta Cobba wyrażona w stopniach, para kręgów wyznaczająca największą deformację oraz strona skrzywienia (prawostronna lub lewostronna). Dane pośrednie - punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów - są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.
+\subsection{Złożoność obliczeniowa}
+\label{subsec:zlozonosc-skolioza}
+
+Niech $V$ oznacza liczbę wokseli wolumenu wejściowego, $N$ -- liczbę punktów wyznaczonej linii środkowej kanału kręgowego, a $K$ -- liczbę kręgów obecnych w segmentacji.
+W analizowanym odcinku $K \leq 7$, a typowa wartość $N$ mieści się w rzędzie setek punktów, podczas gdy $V$ osiąga rząd milionów wokseli.
+
+Etap wstępnego przetwarzania kanału kręgowego zdominowany jest przez operacje wolumetryczne.
+Scalenie etykiet oraz szkieletyzacja metodą Lee wymagają przejrzenia całego wolumenu, ich koszt jest zatem liniowy względem liczby wokseli i wynosi $O(V)$.
+Przepróbkowanie szkieletu do układu zorientowanego prostopadłościanu opisującego oraz wyznaczenie centroidów w kolejnych warstwach poprzecznych mają tę samą złożoność.
+Rekonstrukcja ubytków interpolacją funkcjami sklejanymi oraz późniejsza reparametryzacja krzywej według skumulowanej długości łuku wymagają rozwiązania układu równań o strukturze trójdiagonalnej, co realizowane jest w czasie $O(N)$.
+
+Analiza pojedynczego kręgu obejmuje wyznaczenie centroidu trzonu, odszukanie najbliższego punktu linii środkowej, wyznaczenie lokalnej bazy ortonormalnej oraz ekstrakcję przekroju wraz z detekcją punktów narożnych.
+Wyszukiwanie najbliższego punktu realizowane jest metodą przeglądu zupełnego i ma koszt $O(N)$.
+Analiza głównych składowych wykonywana jest na oknie o stałym rozmiarze 21 punktów, a przepróbkowanie przekroju oraz operacje wizji komputerowej -- otwarcie morfologiczne, detekcja krawędzi metodą Canny'ego, wyznaczenie otoczki wypukłej i aproksymacja wielokątowa -- działają na obrazie o stałym rozmiarze $250 \times 250$ pikseli.
+Koszt tych operacji nie zależy zatem od rozmiaru danych wejściowych, a łączna złożoność etapu analizy kręgów wynosi $O(K \cdot N)$.
+
+Ostatni etap, obejmujący wyznaczenie wspólnej płaszczyzny pomiarowej i obliczenie kąta, wykonywany jest dla każdej pary kręgów spełniającej warunek $j \geq i+2$, czyli dla $\frac{(K-1)(K-2)}{2}$ par.
+Dla każdej pary dekomponowana jest metodą SVD macierz o stałym rozmiarze $8 \times 3$, zawierająca punkty narożne obu kręgów, a następnie wykonywane są rzutowania i obliczenia trygonometryczne na stałej liczbie wektorów.
+Koszt pojedynczej pary jest więc stały, a złożoność całego etapu wynosi $O(K^2)$.
+Przy $K \leq 7$ odpowiada to co najwyżej piętnastu analizowanym parom, wobec czego składnik kwadratowy pozostaje w praktyce pomijalny.
+
+Sumaryczna złożoność algorytmu wynosi:
+
+\begin{equation} \label{eq:zlozonosc-skolioza}
+    O(V + K \cdot N + K^2)
+\end{equation}
+
+i pozostaje zdominowana przez składnik $O(V)$, odpowiadający operacjom wolumetrycznym wykonywanym na pełnym obrazie wejściowym.
+Oznacza to, że czas przetwarzania zależy przede wszystkim od rozdzielczości badania, a nie od liczby analizowanych kręgów ani od stopnia skrzywienia kręgosłupa.
+Warto zaznaczyć, że analiza poszczególnych kręgów przebiega niezależnie, co umożliwia zrównoleglenie tego etapu, jeśli czas przetwarzania okazałby się istotnym ograniczeniem we wdrożeniu klinicznym.
