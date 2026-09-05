@@ -9,7 +9,7 @@ Implementacja algorytmów została przeprowadzona w języku Python z wykorzystan
 Spośród szerokiego spektrum schorzeń odcinka lędźwiowego w pracy skupiono się na trzech jednostkach chorobowych o wyraźnej charakterystyce geometrycznej, które poddają się ilościowej ocenie na podstawie wzajemnego położenia kręgów: skoliozie, kręgozmyku oraz tyłozmyku.
 Skolioza jest bocznym skrzywieniem kręgosłupa w płaszczyźnie czołowej, którego nasilenie określa się standardowo za pomocą kąta Cobba.
 Kręgozmyk (łac. \textit{spondylolisthesis}) polega na przednim przemieszczeniu jednego kręgu względem sąsiedniego kręgu położonego niżej, natomiast tyłozmyk (łac. \textit{retrolisthesis}) oznacza analogiczne przemieszczenie ku tyłowi.
-Wspólną cechą wymienionych patologii jest to, że ich rozpoznanie oraz ocena stopnia zaawansowania opierają się na pomiarach geometrycznych — kątach i przesunięciach liniowych — co czyni je szczególnie podatnymi na automatyzację z wykorzystaniem metod analizy obrazu.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Wspólną cechą wymienionych patologii jest to, że ich rozpoznanie oraz ocena stopnia zaawansowania opierają się na pomiarach geometrycznych -- kątach i przesunięciach liniowych -- co czyni je szczególnie podatnymi na automatyzację z wykorzystaniem metod analizy obrazu.
 
 Wybór tematu pracy podyktowany jest dużą częstością występowania schorzeń odcinka lędźwiowego kręgosłupa w populacji ogólnej. Dolegliwości bólowe w tym obszarze należą do najczęściej zgłaszanych problemów zdrowotnych, które istotnie obniżają jakość życia pacjentów i generują wysokie koszty leczenia. Współczesna medycyna wykorzystuje w diagnostyce zaawansowane metody obrazowania, takie jak rezonans magnetyczny (MRI) czy tomografia komputerowa (CT). Wygenerowane w ten sposób obrazy w formacie DICOM zawierają jednak ogromną ilość danych, których analiza wymaga odpowiedniego przygotowania i specjalistycznej wiedzy.
 
@@ -28,7 +28,7 @@ Cele szczegółowe obejmują:
 \end{itemize}
 
 Zakres pracy obejmuje wyłącznie odcinek lędźwiowy kręgosłupa wraz z sąsiadującymi kręgami granicznymi (od kręgu Th11 do kręgu S1), które stanowią punkty odniesienia dla prowadzonych pomiarów.
-Danymi wejściowymi dla opracowanych metod są gotowe mapy segmentacji, w związku z czym praca nie obejmuje etapu segmentacji surowych obrazów MRI — przyjęto, że segmentacja została wykonana wcześniej za pomocą dostępnych narzędzi automatycznych.
+Danymi wejściowymi dla opracowanych metod są gotowe mapy segmentacji, w związku z czym praca nie obejmuje etapu segmentacji surowych obrazów MRI -- przyjęto, że segmentacja została wykonana wcześniej za pomocą dostępnych narzędzi automatycznych.
 Świadomie ograniczono się do metod opartych na analizie geometrycznej struktur anatomicznych, rezygnując z podejść wykorzystujących uczenie maszynowe.
 Pozwala to zachować pełną interpretowalność wyników oraz bezpośrednio powiązać obliczane wielkości z parametrami stosowanymi w praktyce klinicznej.
 
@@ -43,28 +43,29 @@ Spośród nich 24 kręgi przedkrzyżowe (szyjne, piersiowe i lędźwiowe) pozost
 Odcinek lędźwiowy składa się z pięciu największych i najmocniejszych kręgów, które odpowiadają za utrzymanie znacznej części ciężaru ciała oraz umożliwiają wykonywanie szerokiego zakresu ruchów, przede wszystkim zgięcia i wyprostu w płaszczyźnie strzałkowej.
 Ze względu na swoje położenie i funkcje odcinek ten jest szczególnie narażony na przeciążenie mechaniczne, urazy oraz procesy degeneracyjne.
 
-Patologie odcinka lędźwiowego mogą mieć zróżnicowany charakter – od zmian zwyrodnieniowych i przepuklin dysków międzykręgowych, poprzez zwężenia kanału kręgowego, aż po wady wrodzone czy zmiany pourazowe.
+Patologie odcinka lędźwiowego mogą mieć zróżnicowany charakter -- od zmian zwyrodnieniowych i przepuklin dysków międzykręgowych, poprzez zwężenia kanału kręgowego, aż po wady wrodzone czy zmiany pourazowe.
 Wczesne wykrycie nieprawidłowości ma kluczowe znaczenie, ponieważ szybka diagnoza i odpowiednie leczenie pozwalają ograniczyć postęp choroby, zmniejszyć nasilenie objawów bólowych, a także poprawić rokowania pacjenta.
 Brak szybkiej interwencji może prowadzić do przewlekłego bólu, ograniczenia mobilności, a nawet trwałej niepełnosprawności.
 
 Wśród wymienionych nieprawidłowości szczególną grupę stanowią patologie o wyraźnym charakterze geometrycznym, których rozpoznanie opiera się na ocenie wzajemnego ułożenia kręgów.
-Należą do nich skolioza, czyli boczne skrzywienie kręgosłupa, oraz kręgozmyk i tyłozmyk, polegające na przemieszczeniu kręgu względem sąsiedniego — odpowiednio ku przodowi i ku tyłowi.
+Należą do nich skolioza, czyli boczne skrzywienie kręgosłupa, oraz kręgozmyk i tyłozmyk, polegające na przemieszczeniu kręgu względem sąsiedniego -- odpowiednio ku przodowi i ku tyłowi.
 To właśnie na tych jednostkach chorobowych skupiono się w niniejszej pracy, ponieważ ich ocena sprowadza się do mierzalnych wielkości (kątów i przesunięć liniowych), co czyni je podatnymi na automatyczną analizę na podstawie danych obrazowych.
 
 Skala problemu jest znacząca zarówno w Polsce, jak i na świecie.
 Według danych Światowej Organizacji Zdrowia (WHO) ból krzyża charakteryzuje się najwyższą częstością występowania spośród wszystkich schorzeń układu mięśniowo-szkieletowego i w 2020 roku dotyczył 619 milionów osób na świecie, przy czym prognozuje się wzrost tej liczby do 843 milionów w roku 2050; jest on jednocześnie główną przyczyną niepełnosprawności na świecie\cite{who_lbp}.
 Schorzenia kręgosłupa są jedną z głównych przyczyn absencji w pracy oraz ograniczenia aktywności zawodowej\cite{lefik}.
-W Polsce, jak wskazują dane przytaczane w programie profilaktycznym Ministerstwa Zdrowia, zespoły bólowe kręgosłupa stanowią grupę generującą największą liczbę pacjentów i świadczeń w ambulatoryjnej opiece specjalistycznej, a na wszystkich poziomach opieki zdrowotnej są drugą — po nadciśnieniu tętniczym — najczęstszą grupą pacjentów\cite{mz_kregoslup}.
+W Polsce, jak wskazują dane przytaczane w programie profilaktycznym Ministerstwa Zdrowia, zespoły bólowe kręgosłupa stanowią grupę generującą największą liczbę pacjentów i świadczeń w ambulatoryjnej opiece specjalistycznej, a na wszystkich poziomach opieki zdrowotnej są drugą -- po nadciśnieniu tętniczym -- najczęstszą grupą pacjentów\cite{mz_kregoslup}.
 
 Rosnąca liczba przypadków, starzenie się społeczeństwa oraz coraz większe obciążenia związane ze współczesnym stylem życia (praca siedząca, brak aktywności fizycznej, otyłość) sprawiają, że problem schorzeń kręgosłupa lędźwiowego staje się jednym z kluczowych wyzwań współczesnej medycyny.
 Z tego względu poszukiwanie nowych metod wspierających proces diagnostyczny, w tym narzędzi automatyzujących analizę obrazów medycznych, nabiera szczególnego znaczenia.
 Rozwiązania te mogą nie tylko przyspieszyć wykrycie patologii, ale również odciążyć specjalistów, umożliwiając im skupienie się na najbardziej wymagających przypadkach klinicznych.
 
 Dodatkowym argumentem przemawiającym za automatyzacją jest ograniczona powtarzalność pomiarów wykonywanych ręcznie.
-Ocena parametrów geometrycznych, takich jak kąt Cobba czy wielkość przesunięcia kręgów, obarczona jest istotną zmiennością między- i wewnątrzobserwatorską — różni specjaliści, a niekiedy ten sam specjalista w kolejnych pomiarach, uzyskują rozbieżne wyniki\cite{gstoettner, tallroth}.
+Ocena parametrów geometrycznych, takich jak kąt Cobba czy wielkość przesunięcia kręgów, obarczona jest istotną zmiennością między- i wewnątrzobserwatorską -- różni specjaliści, a niekiedy ten sam specjalista w kolejnych pomiarach, uzyskują rozbieżne wyniki\cite{gstoettner, tallroth}.
 Algorytm wykonujący pomiar w sposób deterministyczny zapewnia pełną powtarzalność, eliminując ten składnik niepewności.
 Problem pogłębia stale rosnący wolumen badań obrazowych przy ograniczonej liczbie radiologów, co zwiększa presję czasową i ryzyko błędu diagnostycznego\cite{kasalak}.
 Narzędzia automatyzujące pomiary mogą zatem nie tylko przyspieszyć analizę, ale przede wszystkim zwiększyć jej obiektywność i odtwarzalność.
+
 Wybór problematyki odcinka lędźwiowego w niniejszej pracy magisterskiej jest zatem uzasadniony zarówno ze względów klinicznych, jak i społecznych.
 Opracowanie i analiza algorytmów klasyfikacyjnych opartych na danych obrazowych może przyczynić się do poprawy jakości diagnostyki oraz stworzyć podstawę do dalszego rozwoju systemów wspomagania decyzji medycznych w radiologii.
 
@@ -82,7 +83,7 @@ Rekonstrukcja trójwymiarowego wolumenu z sekwencji pojedynczych plików, dekodo
 
 Z tego względu w badaniach nad przetwarzaniem obrazów medycznych powszechnie stosuje się format NIfTI (ang. \textit{Neuroimaging Informatics Technology Initiative})\cite{nifti}, opracowany na początku XXI wieku przez grupę roboczą finansowaną przez Narodowe Instytuty Zdrowia Stanów Zjednoczonych (NIH).
 Format ten przechowuje cały trójwymiarowy wolumetr w jednym pliku o rozszerzeniu \texttt{.nii} lub \texttt{.nii.gz} (wariant skompresowany algorytmem gzip).
-Nagłówek pliku NIfTI zawiera informacje niezbędne do poprawnej interpretacji geometrycznej wolumenu: wymiary macierzy wokseli wzdłuż każdej osi, rozdzielczość przestrzenną (ang. \textit{spacing} - odległość między środkami sąsiednich wokseli wyrażona w milimetrach) oraz afiniczną macierz transformacji (ang. \textit{affine matrix}), która jednoznacznie definiuje orientację i pozycję wolumenu w fizycznym układzie współrzędnych pacjenta.
+Nagłówek pliku NIfTI zawiera informacje niezbędne do poprawnej interpretacji geometrycznej wolumenu: wymiary macierzy wokseli wzdłuż każdej osi, rozdzielczość przestrzenną (ang. \textit{spacing} -- odległość między środkami sąsiednich wokseli wyrażona w milimetrach) oraz afiniczną macierz transformacji (ang. \textit{affine matrix}), która jednoznacznie definiuje orientację i pozycję wolumenu w fizycznym układzie współrzędnych pacjenta.
 Dzięki tej macierzy biblioteki takie jak SimpleITK\cite{sitk} umożliwiają dwukierunkową transformację między indeksami wokseli a współrzędnymi fizycznymi -- operację kluczową dla algorytmów opisanych w dalszych rozdziałach pracy.
 Format NIfTI nie przechowuje danych identyfikujących pacjenta, co ułatwia anonimizację i udostępnianie zbiorów badawczych.
 
@@ -96,7 +97,7 @@ W rozważanym zbiorze danych poszczególnym kręgom odcinka lędźwiowego oraz s
 
 Praktyczny proces przygotowania danych obejmuje kilka następujących po sobie etapów.
 Surowe badanie, zapisane jako zbiór plików DICOM, jest najpierw rekonstruowane do pojedynczego trójwymiarowego wolumenu w formacie NIfTI.
-Tak przygotowany wolumen stanowi wejście dla narzędzia segmentującego, którego wynikiem jest mapa segmentacji - również w formacie NIfTI - wykorzystywana następnie przez algorytmy opracowane w niniejszej pracy.
+Tak przygotowany wolumen stanowi wejście dla narzędzia segmentującego, którego wynikiem jest mapa segmentacji -- również w formacie NIfTI -- wykorzystywana następnie przez algorytmy opracowane w niniejszej pracy.
 Rozdzielenie etapu segmentacji od etapu analizy geometrycznej pozwala traktować mapę segmentacji jako dobrze zdefiniowane, ustandaryzowane wejście, niezależne od modalności i parametrów oryginalnego badania.
 
 Sposób uzyskania mapy segmentacji ma bezpośredni wpływ na jakość danych wejściowych.

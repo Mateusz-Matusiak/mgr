@@ -10,7 +10,7 @@ Termin ``skolioza'' ma swoje korzenie w starożytnym słowie ``skolios'' (wygię
 Skoliozę można podzielić na typy: idiopatyczną, wrodzoną i nerwowo-mięśniową.
 Najczęstsza postać skoliozy czyli idiopatyczna skolioza młodzieńcza (AIS), ma nieznaną przyczynę co odzwierciedla termin ``idiopatyczna''.
 AIS jest zazwyczaj wykrywane w okresie dzieciństwa i dorastania, zwłaszcza w okresach szybkiego wzrostu.
-Skolioza wrodzona jest spowodowana nieprawidłowym rozwojem kręgosłupa w stadium embrionalnym, co może obejmować brak segmentacji kręgów, nieprawidłowy kształt lub nieprawidłową liczbę kręgów.
+Skolioza wrodzona jest spowodowana nieprawidłowym rozwojem kręgosłupa w stadium embrionalnym, co może obejmować nieprawidłowy kształt lub nieprawidłową liczbę kręgów.
 Ten rodzaj skoliozy jest często związany z czynnikami genetycznymi i może współistnieć z innymi wadami wrodzonymi, dlatego zazwyczaj rozpoznaje się go po urodzeniu lub we wczesnym okresie niemowlęcym\cite{lim}.
 Skolioza nerwowo-mięśniowa jest wynikiem zaburzeń nerwowo-mięśniowych, które wpływają na mięśnie i nerwy odpowiedzialne za utrzymanie prawidłowego ułożenia kręgosłupa.
 Do najczęstszych przyczyn należą: porażenia mózgowe, dystrofia mięśniowa i urazy rdzenia kręgowego\cite{yale}.
@@ -20,7 +20,7 @@ Według różnych badań częstość występowania skoliozy idiopatycznej młodz
 Stosunek liczby dziewcząt do chłopców waha się od 1,5:1 do 3:1 i znacznie wzrasta wraz z wiekiem\cite{koniecznymr}.
 
 Diagnoza skoliozy wymaga wieloetapowego podejścia łączącego badanie kliniczne z diagnostyką obrazową.
-Istotne jest wczesne wykrycie i ocena stopnia zaawansowania choroby, szczególnie w przypadku AIS.
+Istotne jest wczesne wykrycie i ocena stopnia zaawansowania choroby.
 Proces diagnostyczny rozpoczyna się od zebrania dokładnej historii pacjenta obejmującej:
 \begin{itemize}
     \item dynamikę wzrostu dziecka w ostatnim czasie,
@@ -115,7 +115,7 @@ W niniejszym rozdziale przedstawiono opis zaprojektowanego algorytmu. Proces prz
 \label{subsec:centerline}
 Pierwszym krokiem algorytmu jest wyznaczenie szkieletu kanału kręgowego.
 Metoda zaczyna się od połączenia w jedną całość trzech etykiet segmentacji składających się na kanał kręgowy: właściwego kanału kręgowego, ogona końskiego oraz worka oponowego.
-W ten sposób obszar kanału kręgowego staje się bardziej odporny na „przerwy" w segmentacji, co zwiększa obszar dostępny do dalszego przetwarzania.
+W ten sposób obszar kanału kręgowego staje się bardziej odporny na luki w segmentacji, co zwiększa obszar dostępny do dalszego przetwarzania.
 
 Następnym krokiem jest przekazanie złączonych etykiet do funkcji \texttt{skeletonize} z argumentem \texttt{method='lee'} z pakietu \texttt{scikit-image} w celu wyznaczenia szkieletu kanału kręgowego\cite{scikit-skeletonize}.
 Następnie na zwróconym zbiorze pikseli (szkielecie) dokonano przepróbkowania (resamplingu) do przestrzeni wejściowego kanału kręgowego.
@@ -449,11 +449,19 @@ gdzie $B$ to kwadratowa macierz binarna, a symbol $\circ$ oznacza operację otwa
 Następnie, w celu precyzyjnego wyznaczenia granic trzonu, zastosowano detektor krawędzi Canny'ego\cite{canny} (z biblioteki \texttt{cv2.Canny(image, 0, 1)}, gdzie 0 i 1 to wartości graniczne dla obrazu binarnego trzonu kręgu i tła, między którymi wyznaczona będzie granica).
 Pozwala on na zredukowanie informacji o całej masie kręgu do zbioru punktów brzegowych o szerokości jednego piksela.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{obrazy/krawedzie_l2.png}
+    \captionsetup{justification=centering, font=small}
+    \caption{Wizualizacja wyznaczonej krawędzi pojedynczego kręgu lędźwiowego na lokalnej płaszczyznie przekroju strzałkowego.}
+    \label{fig:edge}
+\end{figure}
+
 Z wykrytych krawędzi ekstrahowany jest kontur zewnętrzny (z biblioteki \texttt{cv2.findContours(image, cv2.RETR\_EXTERNAL, cv2.CHAIN\_APPROX\_SIMPLE)}, z parametrami \texttt{RETR\_EXTERNAL} do wyznaczenia tylko zewnętrznych konturów oraz \texttt{CHAIN\_APPROX\_SIMPLE} do wykrycia tylko niezbędnych punktów).
 
 Aby zniwelować wpływ lokalnych nierówności powierzchni trzonu kręgowego, algorytm wyznacza otoczkę wypukłą (ang. \textit{Convex Hull}) metodą z biblioteki \texttt{cv2.convexHull(contours)}.
 
-Następnie zastosowano algorytm \textbf{Douglasa-Peuckera}\cite{douglas-peucker} (metoda \texttt{cv2.approxPolyDP(hull, arcLength * 0.01, True)} -- gdzie \texttt{arcLength * 0.01} to epsilon aproksymacji równy 1\% długości konturu; im mniejszy, tym bardziej wynikowy wielokąt przypomina oryginał, a trzeci parametr informuje, że krzywa ma być zamkniętą pętlą), który dokonuje aproksymacji wielokątowej konturu.
+Następnie zastosowano algorytm Douglasa--Peuckera\cite{douglas-peucker} (metoda \texttt{cv2.approxPolyDP(hull, arcLength * 0.01, True)} -- gdzie \texttt{arcLength * 0.01} to epsilon aproksymacji równy 1\% długości konturu; im mniejszy, tym bardziej wynikowy wielokąt przypomina oryginał, a trzeci parametr informuje, że krzywa ma być zamkniętą pętlą), który dokonuje aproksymacji wielokątowej konturu.
 Proces ten redukuje liczbę punktów opisujących kształt, pozostawiając jedynie te najbardziej istotne z punktu widzenia geometrii struktury.
 
 Ostatnim etapem analizy geometrycznej jest selekcja czterech kluczowych punktów narożnych z uzyskanego wielokąta aproksymacyjnego.
@@ -468,14 +476,6 @@ Prawy górny róg ($P_{TR}$) oraz lewy dolny róg ($P_{BL}$) są wyznaczane popr
 \begin{equation}
     P_{TR} = argmax(x_i - y_i), P_{BL} = argmin(x_i - y_i)
 \end{equation}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{obrazy/krawedzie_l2.png}
-    \captionsetup{justification=centering, font=small}
-    \caption{Wizualizacja wyznaczonej krawędzi pojedynczego kręgu lędźwiowego na lokalnej płaszczyznie przekroju strzałkowego.}
-    \label{fig:edge}
-\end{figure}
 
 \begin{figure}[H]
     \centering
