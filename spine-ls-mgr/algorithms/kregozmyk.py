@@ -251,8 +251,7 @@ def get_y_vec(closest, canal_points):
 
 #todo fix 41
 os.makedirs("./target", exist_ok=True)
-image = sitk.ReadImage("../data/case1/seg.nii.gz")
-
+image = sitk.ReadImage(os.path.expanduser("~/Desktop/Projects/spine-ls-mgr/data/case11/seg.nii.gz"))
 spinal_canal_labels = {
     "dural_sac": 31,
     "spinal_canal": 32,

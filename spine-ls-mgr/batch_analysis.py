@@ -42,7 +42,7 @@ def run_batch_analysis():
             # Run algorithm-1.py with the case file (use absolute path)
             abs_case_file = os.path.abspath(case_file)
             result = subprocess.run(
-                [sys.executable, "scoliosis_like_kregozmyk_mean_plane.py", abs_case_file],
+                [sys.executable, "scoliosis.py", abs_case_file],
                 capture_output=True,
                 text=True,
                 cwd="./algorithms"

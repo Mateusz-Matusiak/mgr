@@ -178,6 +178,14 @@ Rozwiązanie to ogranicza liczbę operacji przepróbkowania do jednej na kręg, 
 Konsekwencją takiego podejścia jest to, że narożniki obu kręgów pary pochodzą z dwóch różnych płaszczyzn.
 Nie stanowi to problemu, ponieważ punkty te transformowane są do fizycznej przestrzeni trójwymiarowej (w milimetrach), a właściwy pomiar wykonywany jest jako rzut wektorowy w tej przestrzeni, na kierunek wyznaczony przez płytkę graniczną kręgu dolnego.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{obrazy/kregozmyk_kontur.png}
+    \captionsetup{justification=centering, font=small}
+    \caption{Wyznaczone narożne punkty kręgów L4 i L5}
+    \label{fig:spondylolisthesis-contour}
+\end{figure}
+
 \subsection{Wyznaczenie znormalizowanego przesunięcia strzałkowego}
 \label{subsec:przesuniecie}
 
@@ -205,6 +213,15 @@ Wektor $\vec{AP}$ łączy tylne narożniki obu trzonów i reprezentuje pełne pr
     \vec{AP} = P_P - P_A
 \end{equation}
 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{obrazy/kregozmyk_wektory.png}
+    \captionsetup{justification=centering, font=small}
+    \caption{Wyznaczone wektory $\vec{AB}$ i $\vec{AP}$}
+    \label{fig:spondylolisthesis-vectors}
+\end{figure}
+
 Wektor $\vec{AP}$ zawiera składowe we wszystkich trzech kierunkach, w tym składową pionową odpowiadającą wysokości krążka międzykręgowego oraz ewentualną składową boczną.
 Wielkością diagnostyczną jest wyłącznie składowa równoległa do płytki granicznej, dlatego wyznaczany jest rzut prostopadły punktu $P_P$ na prostą zawierającą wektor $\vec{AB}$:
 
@@ -217,6 +234,14 @@ Wektor przemieszczenia $\vec{d}$ zdefiniowany jest jako różnica położenia rz
 \begin{equation} \label{eq:displacement}
     \vec{d} = P_{rzut} - P_A
 \end{equation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{obrazy/kregozmyk_point.png}
+    \captionsetup{justification=centering, font=small}
+    \caption{Przerzutowany punkt $P_{rzut}$ w odniesieniu do $P_A$, $P_B$ i $P_P$}
+    \label{fig:spondylolisthesis-point}
+\end{figure}
 
 Operacja rzutowania realizuje jednocześnie dwa cele.
 Po pierwsze, eliminuje składowe przemieszczenia nieistotne z punktu widzenia rozpoznania, sprowadzając pomiar do jednego wymiaru.

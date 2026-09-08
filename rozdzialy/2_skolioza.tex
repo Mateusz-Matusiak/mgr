@@ -82,7 +82,7 @@ Wymagania funkcjonalne:
     \item \textbf{Obsługa wejściowych danych wolumetrycznych} -- system musi umożliwiać wczytanie trójwymiarowych obrazów medycznych (mapy segmentacji) w standardzie NIfTI\cite{nifti} (.nii.gz), reprezentujące odcinek lędźwiowy kręgosłupa wraz z kanałem kręgowym.
     \item \textbf{Wyznaczenie linii środkowej kanału kręgowego} -- algorytm musi wygenerować gładką krzywą reprezentującą przebieg kanału kręgowego w przestrzeni 3D.
     \item \textbf{Lokalna analiza geometrii kręgu} -- dla każdego kręgu system wyznacza lokalny układ współrzędnych.
-    \item \textbf{Ekstrakcja przekrojów 2D} -- algorytm dokonuje próbkowania (resampling) wolumenu do płaszczyzny strzałkowej każdego kręgu.
+    \item \textbf{Ekstrakcja przekrojów 2D} -- algorytm dokonuje próbkowania (resampling) wolumenu do lokalnej płaszczyzny czołowej każdego kręgu.
     \item \textbf{Wyznaczenie punktów charakterystycznych} -- algorytm określa cztery narożne punkty trzonów kręgów
     \item \textbf{Automatyczny pomiar kąta Cobba} -- system oblicza kąt Cobba pomiędzy dowolnymi parami kręgów oraz identyfikuje parę kręgów o największej deformacji.
     \item \textbf{Określenie strony skrzywienia} -- system klasyfikuje skrzywienie jako prawo- lub lewostronne.
@@ -118,8 +118,10 @@ Metoda zaczyna się od połączenia w jedną całość trzech etykiet segmentacj
 W ten sposób obszar kanału kręgowego staje się bardziej odporny na luki w segmentacji, co zwiększa obszar dostępny do dalszego przetwarzania.
 
 Następnym krokiem jest przekazanie złączonych etykiet do funkcji \texttt{skeletonize} z argumentem \texttt{method='lee'} z pakietu \texttt{scikit-image} w celu wyznaczenia szkieletu kanału kręgowego\cite{scikit-skeletonize}.
-Następnie na zwróconym zbiorze pikseli (szkielecie) dokonano przepróbkowania (resamplingu) do przestrzeni wejściowego kanału kręgowego.
-Kolejnym krokiem jest przeiterowanie się przez całą długość wektora Z (wysokość) przepróbkowanego szkieletu kanału kręgowego z krokiem równym grubości warstwy przestrzeni i wyznaczenie punktów kanału kręgowego.
+Następnie dla otrzymanego szkieletu wyznaczany jest zorientowany prostopadłościan opisujący (ang. \textit{oriented bounding box}) przy użyciu filtru \textit{LabelShapeStatisticsImageFilter}, a szkielet przepróbkowywany jest do układu współrzędnych tego prostopadłościanu.
+Zabieg ten sprawia, że oś podłużna nowej siatki obrazu podąża za rzeczywistym przebiegiem kanału kręgowego, a nie za osią skanera, dzięki czemu kolejne warstwy poprzeczne pozostają w przybliżeniu prostopadłe do kanału niezależnie od ułożenia pacjenta.
+Przyjęto rozdzielczość przepróbkowania równą $1{\times}1{\times}2$ mm, przy czym trzecia składowa odpowiada krokowi wzdłuż osi podłużnej kanału.
+Kolejnym krokiem jest przejście przez wszystkie warstwy poprzeczne przepróbkowanego szkieletu i wyznaczenie w każdej z nich centroidu, który stanowi punkt linii środkowej kanału kręgowego.
 Niekiedy segmentacja kanału kręgowego mimo połączenia trzech etykiet dalej jest niepełna bądź nieciągła, w tym przypadku wykrywane są brakujące fragmenty i uzupełniane.
 \begin{figure}[H]
     \centering
@@ -153,9 +155,13 @@ Niech $P = \{p_0, p_1, \dots, p_N\}$ będzie zbiorem uporządkowanych punktów (
 
 Zdefiniowano parametry systemowe:
 \begin{itemize}
-    \item $h_{step}$ –- oczekiwany krok próbkowania, odpowiadający grubości warstwy badawczej (Slice Thickness) lub odstępowi między skanami (w implementacji przyjęto $h_{step} = 3.2$ mm).
-    \item $T_{thresh}$ –- próg detekcji błędu, definiujący minimalną odległość uznawaną za lukę w danych.
+    \item $h_{step}$ –- referencyjny krok wzdłuż osi podłużnej, odpowiadający typowej grubości warstwy badania MRI w analizowanym zbiorze danych (w implementacji przyjęto $h_{step} = 3{,}2$ mm).
+    \item $T_{thresh}$ –- próg detekcji ubytku, definiujący minimalną odległość uznawaną za lukę w danych (w implementacji $T_{thresh} = h_{step} = 3{,}2$ mm).
 \end{itemize}
+
+Wartość $h_{step}$ jest większa od kroku przepróbkowania szkieletu, wynoszącego 2 mm, dzięki czemu naturalne wahania położenia centroidów w sąsiednich warstwach nie są interpretowane jako ubytki segmentacji -- za lukę uznawana jest dopiero przerwa odpowiadająca ponad półtorej warstwie przepróbkowanego szkieletu.
+Należy przy tym zaznaczyć, że odległość $\Delta z_i$ mierzona jest wzdłuż osi pionowej układu współrzędnych pacjenta, a nie wzdłuż osi podłużnej kanału kręgowego.
+Dla odcinków silnie odchylonych od pionu wyznaczona różnica jest zatem mniejsza od rzeczywistej odległości między punktami, co czyni przyjęte kryterium zachowawczym: algorytm może pominąć niewielki ubytek, ale nie zgłosi ubytku nieistniejącego.
 
 Jeśli wyznaczona odległość $\Delta z_i$ przekracza próg $T_{thresh}$, algorytm klasyfikuje ten obszar jako ubytek segmentacji.
 Liczba brakujących warstw $k_{miss}$ estymowana jest na podstawie ilorazu całkowitego odległości i oczekiwanego kroku:
@@ -407,6 +413,8 @@ Dla każdego piksela (u,v) na wynikowym obrazie 2D, jego współrzędne w fizycz
 
 gdzie $s_u,s_v$ to wartości odstępu między pikselami (\textit{spacing}).
 Wynikiem tej operacji jest obraz \texttt{resampled}, który stanowi bazę dla kolejnego etapu -- ekstrakcji konturu trzonu kręgu.
+Płaszczyzna przekroju rozpięta jest na osiach $\vec{x}$ (boczno-przyśrodkowej) oraz $\vec{y}$ (pionowej), co odpowiada lokalnej płaszczyźnie czołowej kręgu.
+Wybór ten wynika bezpośrednio z definicji metody Cobba, która opisuje deformację w płaszczyźnie czołowej; oś $\vec{z}$ pełni w tym przypadku rolę normalnej płaszczyzny pomiarowej.
 
 \begin{figure}[H]
     \centering
@@ -423,14 +431,14 @@ Wynikiem tej operacji jest obraz \texttt{resampled}, który stanowi bazę dla ko
     \caption{Widok czołowy badania}
     \label{fig:scoliosis-anterior-plane}
     \end{subfigure}
-    \caption{Wizualizacja trójwymiarowa pojedynczego kręgu lędźwiowego wraz z nałożoną lokalną płaszczyzną przekroju strzałkowego, wyznaczoną na podstawie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$}
+    \caption{Wizualizacja trójwymiarowa pojedynczego kręgu lędźwiowego wraz z nałożoną lokalną płaszczyzną przekroju czołowego, wyznaczoną na podstawie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.75\textwidth]{obrazy/2d_resampled.png}
     \captionsetup{justification=centering, font=small}
-    \caption{Wizualizacja dwuwymiarowa pojedynczego kręgu lędźwiowego na lokalnej płaszczyznie przekroju strzałkowego.}
+    \caption{Wizualizacja dwuwymiarowa pojedynczego kręgu lędźwiowego na lokalnej płaszczyźnie przekroju czołowego.}
     \label{fig:2d_resampled}
 \end{figure}
 
@@ -439,7 +447,10 @@ Po uzyskaniu zorientowanego lokalnie przekroju 2D, algorytm przystępuje do kluc
 Punkty te definiują blaszki graniczne (górną i dolną), stanowiąc bezpośrednią podstawę do obliczenia kąta Cobba.
 Do wyznaczenia tych struktur użyte będą metody z biblioteki OpenCV dla Pythona cv2\cite{opencv}.
 
-W celu wyeliminowania drobnych artefaktów powstałych na etapie segmentacji, obraz poddawany jest operacji morfologicznego otwarcia (ang. \textit{morphological opening}, z biblioteki \texttt{cv2.morphologyEx(image, cv2.MORPH\_OPEN, np.ones((5, 5), np.uint8), iterations=2)})\cite{morph-opening}.
+W pierwszej kolejności przekrój poddawany jest operacji wypełnienia otworów wewnętrznych (\texttt{sitk.BinaryFillhole}).
+Usuwa ona niezasegmentowane obszary znajdujące się wewnątrz trzonu, które w przeciwnym razie zostałyby wykryte przez detektor krawędzi jako dodatkowe kontury wewnętrzne.
+
+Następnie, w celu wyeliminowania drobnych artefaktów powstałych na etapie segmentacji, obraz poddawany jest operacji morfologicznego otwarcia (ang. \textit{morphological opening}, z biblioteki \texttt{cv2.morphologyEx(image, cv2.MORPH\_OPEN, np.ones((5, 5), np.uint8), iterations=2)})\cite{morph-opening}.
 Wykorzystano element strukturalny o rozmiarze \texttt{5x5} pixeli co pozwala na wygładzenie brzegów struktury przy jednoczesnym zachowaniu jej pierwotnego kształtu oraz dwie iteracje, aby wyeliminować szum oraz drobne struktury niebędące częścią trzonu:
 \begin{equation}
     I_{cleaned} = (I_{flat} \circ B)
@@ -453,7 +464,7 @@ Pozwala on na zredukowanie informacji o całej masie kręgu do zbioru punktów b
     \centering
     \includegraphics[width=1\textwidth]{obrazy/krawedzie_l2.png}
     \captionsetup{justification=centering, font=small}
-    \caption{Wizualizacja wyznaczonej krawędzi pojedynczego kręgu lędźwiowego na lokalnej płaszczyznie przekroju strzałkowego.}
+    \caption{Wizualizacja wyznaczonej krawędzi pojedynczego kręgu lędźwiowego na lokalnej płaszczyźnie przekroju czołowego.}
     \label{fig:edge}
 \end{figure}
 
@@ -537,6 +548,25 @@ Wektor ten wskazuje kierunek, w którym wariancja danych jest najmniejsza, co ma
 
 Sama dekompozycja SVD dostarcza jedynie wektora normalnego $n$, prostopadłego do płaszczyzny pomiarowej.
 Aby zdefiniować ortonormalną bazę $\{\vec{x}_{plane}, \vec{y}_{plane}\}$ rozpinającą tę płaszczyznę, wykorzystano dodatkowo kierunek przebiegu kręgosłupa $\vec{s}$, wyznaczony jako różnica środków geometrycznych chmur punktów narożnych kręgu górnego ($\bar{p}_{upper}$) i dolnego ($\bar{p}_{lower}$):
+
+\begin{equation} \label{eq:spine_vec}
+    \vec{s} = \bar{p}_{upper} - \bar{p}_{lower}
+\end{equation}
+
+Pierwszy wektor bazy płaszczyzny wyznaczany jest jako iloczyn wektorowy kierunku przebiegu kręgosłupa oraz wektora normalnego, dzięki czemu leży on w płaszczyźnie pomiarowej i jest prostopadły do osi podłużnej analizowanego odcinka:
+
+\begin{equation} \label{eq:plane_x}
+    \vec{x}_{plane} = \frac{\vec{s} \times \vec{n}}{|\vec{s} \times \vec{n}|}
+\end{equation}
+
+Drugi wektor bazy uzupełnia układ do bazy ortonormalnej rozpinającej płaszczyznę:
+
+\begin{equation} \label{eq:plane_y}
+    \vec{y}_{plane} = \frac{\vec{n} \times \vec{x}_{plane}}{|\vec{n} \times \vec{x}_{plane}|}
+\end{equation}
+
+Tak zdefiniowana baza $\{\vec{x}_{plane},\, \vec{y}_{plane}\}$ pozwala wyrazić położenie zrzutowanych punktów narożnych w dwuwymiarowym układzie współrzędnych wspólnej płaszczyzny pomiarowej.
+
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
@@ -591,13 +621,23 @@ Strona skrzywienia kręgosłupa wyznaczana jest na podstawie znaku iloczynu wekt
 
 Jeżeli $c \geq 0$, skrzywienie klasyfikowane jest jako \textit{prawostronne} (łac. \textit{dextroscoliosis}), w przeciwnym razie jako \textit{lewostronne} (łac. \textit{levoscoliosis}).
 
-Obliczenia kąta Cobba wykonywane są dla wszystkich par kręgów $(k_i,\, k_j)$ spełniających warunek $j \geq i + 2$, co wyklucza pary kręgów bezpośrednio sąsiadujących i odpowiada klinicznej definicji skrzywienia angażującego co najmniej trzy poziomy kręgosłupa. Wynikowy kąt maksymalny wyznaczany jest jako:
+Analizą objęto kręgi od Th11 do L5.
+Kręg S1, mimo że jest obecny w mapie segmentacji, został wyłączony z pomiaru po konsultacji z lekarzem radiologiem.
+Stanowi on element kości krzyżowej, a jego górna powierzchnia nie jest płytką graniczną porównywalną z płytkami kręgów lędźwiowych: jej nachylenie wynika z ustawienia miednicy, a nie z ewentualnego skrzywienia odcinka lędźwiowego.
+Uwzględnienie tego kręgu w analizie prowadziło do zawyżania wyznaczanego kąta w parach obejmujących poziom L5/S1.
+
+Obliczenia kąta Cobba wykonywane są dla wszystkich par kręgów $(k_i,\, k_j)$ spełniających warunek $j \geq i + 2$, co wyklucza pary kręgów bezpośrednio sąsiadujących.
+Dla takich par wyznaczony kąt zdominowany jest przez klinowatość krążka międzykręgowego oraz lokalną asymetrię płytek granicznych, a nie przez rzeczywiste skrzywienie kręgosłupa, przez co wynik nie odpowiadałby pomiarowi wykonywanemu metodą Cobba. Wynikowy kąt maksymalny wyznaczany jest jako:
 
 \begin{equation} \label{eq:max_cobb}
     \alpha_{max} = \max_{\substack{i,j \\ j \geq i+2}} |\alpha(k_i, k_j)|
 \end{equation}
 
-Wynikiem działania algorytmu jest wartość kąta Cobba wyrażona w stopniach, para kręgów wyznaczająca największą deformację oraz strona skrzywienia (prawostronna lub lewostronna). Dane pośrednie - punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów - są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.
+Wynikiem działania algorytmu jest wartość kąta Cobba wyrażona w stopniach, para kręgów wyznaczająca największą deformację oraz strona skrzywienia (prawostronna lub lewostronna).
+Klasyfikacja badania jako zdrowego lub patologicznego polega na porównaniu wyznaczonej wartości $\alpha_{max}$ z przyjętą wartością progową.
+Punktem odniesienia jest kryterium Scoliosis Research Society, zgodnie z którym skrzywienie o kącie Cobba przekraczającym 10\degree{} stanowi podstawę rozpoznania skoliozy.
+Kryterium to sformułowano jednak dla pomiaru wykonywanego na radiogramie w pozycji stojącej, podczas gdy analizowane segmentacje pochodzą z badań MRI wykonywanych w pozycji leżącej, w której skrzywienie bywa mniej nasilone.
+Z tego powodu wartość progowa stosowana przez opisywany algorytm została dobrana empirycznie na podstawie zbioru badań referencyjnych; procedurę jej wyznaczenia oraz uzyskane wyniki przedstawiono w dalszej części pracy. Dane pośrednie - punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów - są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.
 \subsection{Złożoność obliczeniowa}
 \label{subsec:zlozonosc-skolioza}
 
