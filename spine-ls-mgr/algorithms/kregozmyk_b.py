@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 import SimpleITK as sitk
 import numpy as np
@@ -251,7 +252,9 @@ def get_y_vec(closest, canal_points):
 
 #todo fix 41
 os.makedirs("./target", exist_ok=True)
-image = sitk.ReadImage(os.path.expanduser("~/Desktop/Projects/spine-ls-mgr/data/case11/seg.nii.gz"))
+default_input = "~/Desktop/Projects/spine-ls-mgr/data/case41/seg.nii.gz"
+input_path = sys.argv[1] if len(sys.argv) > 1 else default_input
+image = sitk.ReadImage(os.path.expanduser(input_path))
 spinal_canal_labels = {
     "dural_sac": 31,
     "spinal_canal": 32,

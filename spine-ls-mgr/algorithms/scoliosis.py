@@ -194,7 +194,11 @@ def cobb_angle(v1, v2, x_vec, y_vec):
     cross = u1[0] * u2[1] - u1[1] * u2[0]
     signed_angle = angle if cross >= 0 else -angle
 
-    direction = "prawostronna" if signed_angle > 0 else "lewostronna" if signed_angle < 0 else "neutral"
+    # Po zakotwiczeniu normalnej (fit_plane_svd) oś x_vec wskazuje prawą stronę
+    # pacjenta, a y_vec kierunek dogłowowy. Przy skrzywieniu lewowypukłym płytki
+    # graniczne zbiegają się po stronie prawej, więc iloczyn wektorowy u1 x u2
+    # jest dodatni. Dodatni kąt ze znakiem oznacza zatem skrzywienie lewowypukłe.
+    direction = "lewostronna" if signed_angle > 0 else "prawostronna" if signed_angle < 0 else "neutral"
 
     return signed_angle, direction
 
@@ -274,6 +278,13 @@ def fit_plane_svd(points):
     centered = points - centroid
     _, _, vh = np.linalg.svd(centered)
     normal = vh[-1]  # najmniejsza wartość osobliwa
+    # SVD zwraca normalną z dowolnym zwrotem, przez co lokalny układ (x, y)
+    # płaszczyzny bywa odbiciem lustrzanym między badaniami, a wyznaczona
+    # strona skrzywienia jest wtedy nieporównywalna. Zwrot kotwiczymy
+    # anatomicznie: w układzie LPS druga współrzędna rośnie ku tyłowi
+    # pacjenta, więc normalna zawsze wskazuje kierunek grzbietowy.
+    if normal[1] < 0:
+        normal = -normal
     return centroid, normal
 
 
@@ -439,8 +450,8 @@ def main():
     if len(sys.argv) == 2:
         nifti_file = sys.argv[1]
     else:
-        nifti_file = '../data/case64/seg.nii.gz'
-    image = sitk.ReadImage(nifti_file)
+        nifti_file = "~/Desktop/Projects/spine-ls-mgr/data/case40/seg.nii.gz"
+    image = sitk.ReadImage(os.path.expanduser(nifti_file))
     algo(image)
 
 

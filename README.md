@@ -80,8 +80,8 @@ Comment those two `\newcommand*` lines out to get a clean reading copy.
 spine-ls-mgr/
 ├── algorithms/
 │   ├── scoliosis.py          # Cobb angle — takes the NIfTI path as argv[1]
-│   ├── kregozmyk.py          # Current spondylolisthesis/retrolisthesis algorithm
-│   ├── legacy_kregozmyk.py   # Earlier revision of the same algorithm, kept for reference
+│   ├── kregozmyk_a.py        # Slip algorithm, wariant A (chord tangent) — main variant in chapter 4
+│   ├── kregozmyk_b.py        # Slip algorithm, wariant B (PCA tangent) — compared in chapter 4
 │   ├── slicer.py             # Helper: serialise points/vectors to 3D Slicer Markups JSON
 │   ├── tonifti.py            # DICOM → NIfTI conversion (paths hardcoded, edit before use)
 │   └── target/               # Output directory (JSON markups, debug volumes) — git-ignored
@@ -98,9 +98,8 @@ The NIfTI segmentations are **not** in this repository. They live outside it, at
 ~/Desktop/Projects/spine-ls-mgr/data/case<N>/seg.nii.gz    # 69 cases
 ```
 
-`kregozmyk.py` and `legacy_kregozmyk.py` hardcode a path to that location (case 11 and case
-3 respectively) — edit the `sitk.ReadImage(...)` line near the bottom of the file before
-running. `batch_analysis.py` instead expects a `data/` directory next to itself, so symlink
+`kregozmyk_a.py` and `kregozmyk_b.py` take the NIfTI path as argv[1] and fall back to a
+hardcoded path in that location (case 3 and case 41 respectively). `batch_analysis.py` instead expects a `data/` directory next to itself, so symlink
 it once:
 
 ```bash
@@ -124,8 +123,8 @@ pip install scikit-learn      # used by scoliosis.py, missing from requirements.
 cd spine-ls-mgr/algorithms
 python3 scoliosis.py ~/Desktop/Projects/spine-ls-mgr/data/case64/seg.nii.gz
 
-# Single case, slip between consecutive vertebrae (path hardcoded inside the file)
-python3 kregozmyk.py
+# Single case, slip between consecutive vertebrae (wariant A; kregozmyk_b.py = wariant B)
+python3 kregozmyk_a.py ~/Desktop/Projects/spine-ls-mgr/data/case1/seg.nii.gz
 
 # All cases, Cobb angle
 cd spine-ls-mgr
@@ -153,7 +152,7 @@ Both share the first three stages of the pipeline; they diverge only at the meas
    - *Scoliosis* (`scoliosis.py`) — every vertebra pair from th11 to l5 is evaluated;
      endplate vectors are projected onto a common SVD-fitted plane, and the largest signed
      Cobb angle wins.
-   - *Slip* (`kregozmyk.py`) — for each consecutive pair, the anterior slip
+   - *Slip* (`kregozmyk_a.py`, `kregozmyk_b.py`) — for each consecutive pair, the anterior slip
      (*kręgozmyk*) or posterior slip (*tyłozmyk*) is reported as a normalised scalar
      projection of the offset onto the lower endplate; the sign of the dot product decides
      which of the two it is.
@@ -195,5 +194,5 @@ still needs.
 | See what is still open | `todo.txt` |
 | See what the supervisor asked for | `uwagi_promotora.md` |
 | Understand the scoliosis method | chapter 2 (`rozdzialy/2_skolioza.tex`) + `algorithms/scoliosis.py` |
-| Understand the slip method | chapter 3 (`rozdzialy/3_kregozmyk_tylozmyk.tex`) + `algorithms/kregozmyk.py` |
+| Understand the slip method | chapter 3 (`rozdzialy/3_kregozmyk_tylozmyk.tex`) + `algorithms/kregozmyk_a.py` |
 | Look at the measured numbers | `algorithms_results.xlsx` |
