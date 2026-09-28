@@ -3,7 +3,6 @@
 
 Przedmiotem oceny przedstawionej w niniejszym rozdziale są dwa algorytmy opisane w~rozdziałach~\ref{chap:skolioza} oraz~\ref{chap:kregozmyk}: algorytm wyznaczający kąt Cobba w~płaszczyźnie czołowej oraz algorytm mierzący przesunięcie trzonów w~płaszczyźnie strzałkowej.
 Obydwa uruchomiono na tym samym zbiorze map segmentacji, a~uzyskane wyniki pomiaru zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
-Zestawienie to nie jest porównaniem dwóch pomiarów tej samej wielkości -- opis radiologiczny stanowi jakościową ocenę pojedynczego obserwatora, formułowaną na potrzeby diagnostyki, a~nie pomiaru -- wobec czego ocenie podlega zgodność klasyfikacji przypadku, a~nie dokładność wyznaczonej wartości liczbowej.
 Rozdział rozpoczyna charakterystyka wykorzystanego zbioru badań oraz przyjętej metodyki oceny, po których przedstawiono wyniki każdego z~algorytmów osobno wraz z~procedurą doboru wartości progowej oddzielającej przypadki prawidłowe od patologicznych.
 Całość zamyka analiza przypadków sklasyfikowanych niezgodnie z~opisem radiologicznym oraz omówienie zidentyfikowanych źródeł rozbieżności.
 
@@ -26,7 +25,6 @@ Niezależnie od opisów część badań poddano bezpośredniej ocenie lekarza sp
 Wykorzystane badania nie zostały zebrane specjalnie na potrzeby tej pracy, lecz pochodzą z rutynowej diagnostyki.
 Oznacza to, że liczba przypadków z daną patologią nie była z góry ustalona, a opisy były tworzone przez różnych radiologów, dlatego uzyskane wyniki należy interpretować z pewną ostrożnością.
 Nie towarzyszą mu dane demograficzne pacjentów, nie jest też zbilansowany pod względem liczby przypadków prawidłowych i~patologicznych: dla skoliozy proporcja ta wynosi 42 do 25, natomiast każde badanie, dla którego wyznaczono przesunięcie, zawiera w~opisie wzmiankę o~ześlizgu, przez co dla drugiego algorytmu zbiór nie dostarcza ani jednego przypadku ujemnego na poziomie badania.
-Opisy pochodzą ponadto od różnych autorów i~nie stosują jednolitej terminologii ani jednolitego progu rozpoznania, co przy zestawieniu z~pomiarem ilościowym stanowi samodzielne źródło rozbieżności.
 
 
 \begin{table}[H]
@@ -92,8 +90,6 @@ Sama metoda Cobba wykazuje przy tym udokumentowaną zmienność obserwatora (pod
 
 Uzupełnieniem opisów jest bezpośrednia ocena lekarza specjalisty, który przeanalizował wyniki algorytmu detekcji kręgozmyku poziom po poziomie w~podzbiorze 14 badań.
 Materiał ten jest cenniejszy od opisu, ponieważ odnosi się wprost do poziomów wskazanych przez algorytm, w~tym do poziomów uznanych przez lekarza za prawidłowe.
-W~jednym z~tych badań (nr~5) ocena lekarza posłużyła również do uzupełnienia referencji: opis radiologiczny nie wymienia ześlizgu na poziomie L1/L2, lekarz rozpoznał tam jednak tyłozmyk, wobec czego poziom ten zaliczono do patologicznych.
-Jest to jedyny poziom, którego etykieta nie pochodzi z~opisu radiologicznego.
 Należy jednak zaznaczyć, że ten sam podzbiór stanowi część materiału, na którym liczona jest skuteczność, przez co wyznaczony na nim próg nie jest niezależny od zbioru oceny.
 
 \subsection{Miary skuteczności}
@@ -125,7 +121,6 @@ Po drugie, oba błędy mają w~zastosowaniu medycznym odmienną wagę: pominięc
 Ponieważ opisywane algorytmy mają pełnić funkcję przesiewową, wspierającą ocenę radiologa, a~nie ją zastępującą, przy doborze wartości progowych wyżej ceniono czułość niż swoistość.
 
 Badania, dla których algorytm nie zwrócił wyniku wskutek błędu segmentacji, nie wchodzą do żadnej z~powyższych miar.
-Ich liczbę podano osobno w~tabeli~\ref{tab:zbior}, a~przyczyny omówiono w~podrozdziale~\ref{sec:bledy}.
 Rozwiązanie takie oddziela jakość pomiaru od jakości danych wejściowych: metryki opisują skuteczność samego pomiaru, natomiast odsetek badań bez wyniku stanowi odrębną charakterystykę niezawodności całego przetwarzania.
 
 \subsection{Warunki eksperymentu}
@@ -250,7 +245,6 @@ Kolumna \textit{Ocena z~opisu} przedstawia rozpoznanie odczytane z~opisu radiolo
 
 Skuteczność klasyfikacji dla wartości progowych z~zakresu od 6\degree{} do 12\degree{} zestawiono w~tabeli~\ref{tab:progi-skolioza}.
 Kąty zmierzone w~obu grupach badań wyraźnie się nakładają: w~badaniach opisanych jako skolioza mieszczą się w~przedziale 3,58--29,79\degree{}, a~w~badaniach bez rozpoznania -- w~przedziale 3,23--17,82\degree{}.
-Żadna wartość progowa nie rozdziela więc obu grup w~sposób ostry, a~pole pod krzywą ROC wynosi 0,774.
 
 Kryterium Scoliosis Research Society nie zostało przyjęte wprost z~przyczyn omówionych w~podrozdziale~\ref{subsec:cobb}, a~wyniki potwierdzają tę decyzję.
 Przy progu 10\degree{} czułość spada do 0,537, co oznacza pominięcie 19 z~41 badań, w~których radiolog rozpoznał skoliozę.
@@ -331,7 +325,6 @@ Dwóch pozostałych rozbieżności nie wyjaśnia obecność drugiego łuku.
 W~badaniu nr 15 największy kąt wynosi 3,58\degree{}, a~kręgosłup jest niemal prosty, przez co znak kąta jest w~praktyce przypadkowy.
 W~badaniu nr 29 wszystkie pary o~kącie przekraczającym 5\degree{} wskazują stronę prawą, a~przyczyny niezgodności z~opisem nie udało się ustalić.
 Wyniki te pokazują, że przy skrzywieniu dwułukowym pojedyncza etykieta strony nie opisuje kształtu kręgosłupa w~pełni.
-Naturalnym rozszerzeniem algorytmu jest raportowanie każdego łuku osobno, wraz z~jego kątem i~stroną.
 
 \begin{table}[H]
     \centering
@@ -382,7 +375,7 @@ Ponieważ zbiór nie zawiera badań bez opisanego ześlizgu (podrozdział~\ref{s
     \hline
     \multicolumn{3}{l}{\textbf{Razem}} & \textbf{64} & \textbf{19} & \textbf{15} \\
     \hline
-    \multicolumn{6}{p{10.8cm}}{\small k -- kręgozmyk, t -- tyłozmyk; przy poziomach wykrytych podano wartość $s$. Za wykryty uznano poziom, na którym $s \geq 0{,}06$ dla kręgozmyku lub $s \geq 0{,}10$ dla tyłozmyku. $^{*}$~Opis wskazuje wyłącznie ześlizg boczny kręgu L4, bez składowej strzałkowej.} \\
+    \multicolumn{6}{p{10.8cm}}{\small k -- kręgozmyk, t -- tyłozmyk; przy poziomach wykrytych podano wartość $s$. Za wykryty uznano poziom, na którym $s \geq 0{,}06$ dla kręgozmyku lub $s \geq 0{,}10$ dla tyłozmyku.} \\
     \endlastfoot
     1 & L4/L5 k\newline L5/S1 t & L4/L5 0,142 k\newline L5/S1 0,183 t & 2 & 0 & 0 \\
     2 & L5/S1 k & L4/L5 0,126 t\newline L5/S1 0,321 k & 1 & 1 & 0 \\
@@ -411,7 +404,7 @@ Ponieważ zbiór nie zawiera badań bez opisanego ześlizgu (podrozdział~\ref{s
     25 & L5/S1 k & L4/L5 0,120 t\newline L5/S1 0,202 k & 1 & 1 & 0 \\
     26 & L4/L5 k & L4/L5 0,131 k & 1 & 0 & 0 \\
     27 & L2/L3 k & L2/L3 0,067 k & 1 & 0 & 0 \\
-    28 & ---$^{*}$ & brak wyniku & --- & --- & --- \\
+    28 & --- & brak wyniku & --- & --- & --- \\
     29 & L4/L5 k & L4/L5 0,095 k\newline L5/S1 0,115 t & 1 & 1 & 0 \\
     30 & L4/L5 k & L4/L5 0,076 k & 1 & 0 & 0 \\
     31 & L4/L5 k & L4/L5 0,133 k\newline L5/S1 0,149 t & 1 & 1 & 0 \\
@@ -632,6 +625,16 @@ Klasyfikację algorytmu można w~tych przypadkach uznać za trafne wskazanie ten
     \captionsetup{justification=centering, font=small}
     \caption{Przykłady wyników fałszywie dodatnich -- badania bez opisanej skoliozy, w~których zmierzony kąt Cobba przekroczył wartość progową, a~obraz wskazuje na tendencję do skrzywienia bocznego}
     \label{fig:prawie-skolioza}
+\end{figure}
+
+Pomiar dla badania nr 28 odrzucono, ponieważ przy masywnej rotoskoliozie segmentacja okazała się złej jakości, a~algorytm zwrócił niewiarygodną wartość kąta 98,80\degree{} (rys.~\ref{fig:skolioza-odrzucony}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=9cm, width=0.6\textwidth, keepaspectratio]{obrazy/case28_niewiarygodny}
+    \captionsetup{justification=centering, font=small}
+    \caption{Badanie nr 28 -- segmentacja złej jakości przy masywnej rotoskoliozie, zmierzony kąt 98,80\degree{} (pomiar odrzucony)}
+    \label{fig:skolioza-odrzucony}
 \end{figure}
 
 \subsection{Algorytm detekcji kręgozmyku i~tyłozmyku}
