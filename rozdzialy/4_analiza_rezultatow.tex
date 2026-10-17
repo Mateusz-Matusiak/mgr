@@ -1,30 +1,30 @@
 \chapter{Analiza rezultatów}
 \label{chap:wyniki}
 
-Przedmiotem oceny przedstawionej w niniejszym rozdziale są dwa algorytmy opisane w~rozdziałach~\ref{chap:skolioza} oraz~\ref{chap:kregozmyk}: algorytm wyznaczający kąt Cobba w~płaszczyźnie czołowej oraz algorytm mierzący przesunięcie trzonów w~płaszczyźnie strzałkowej.
-Obydwa uruchomiono na tym samym zbiorze map segmentacji, a~uzyskane wyniki pomiaru zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
-Rozdział rozpoczyna charakterystyka wykorzystanego zbioru badań oraz przyjętej metodyki oceny, po których przedstawiono wyniki każdego z~algorytmów osobno wraz z~procedurą doboru wartości progowej oddzielającej przypadki prawidłowe od patologicznych.
-Całość zamyka analiza przypadków sklasyfikowanych niezgodnie z~opisem radiologicznym oraz omówienie zidentyfikowanych źródeł rozbieżności.
+Niniejszy rozdział przedstawia analizę działania algorytmów opisanych w~rozdziałach~\ref{chap:skolioza} oraz~\ref{chap:kregozmyk}.
+Analiza obejmowała uruchomionie obydwu przypadków na tym samym zbiorze map segmentacji, a~uzyskane wyniki zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
+Rozdział obejmuje charakterystykę wykorzystanego zbioru badań oraz przyjętej metodyki oceny. Następnie przedstawiono wyniki każdego z~algorytmów osobno wraz z~procedurą doboru wartości progowej oddzielającej przypadki prawidłowe od patologicznych.
+Analizę zamyka lista przypadków sklasyfikowanych niezgodnie z~opisem radiologicznym wraz z omówieniem zidentyfikowanych źródeł rozbieżności.
 
 
 \section{Charakterystyka zbioru badań}
 \label{sec:material}
 
-Ocenę skuteczności obu algorytmów przeprowadzono na zbiorze 67 badań rezonansu magnetycznego odcinka lędźwiowo-krzyżowego kręgosłupa, udostępnionych w~postaci map segmentacji zapisanych w~formacie NIfTI.
-Mapy segmentacji wygenerowano automatycznym narzędziem będącym własnością firmy Pixel Technology sp. z~o.o.; kolejne etapy przygotowania danych -- od rekonstrukcji wolumenu z~plików DICOM po mapę etykiet -- omówiono w~podrozdziale~\ref{sec:obrazowanie}.
-Algorytmy operują wyłącznie na mapie etykiet, a~nie na surowych intensywnościach sygnału, wobec czego parametry akwizycji poszczególnych badań wpływają na wynik pomiaru jedynie pośrednio -- poprzez jakość otrzymanej segmentacji.
+Ocenę skuteczności obu algorytmów przeprowadzono na zbiorze 67 badań rezonansu magnetycznego odcinka lędźwiowo-krzyżowego kręgosłupa, udostępnionych w postaci map segmentacji zapisanych w formacie NIfTI.
+Mapy segmentacji wygenerowano przy użyciu automatycznego narzędzia będącego własnością firmy Pixel Technology sp. z o.o.
+Kolejne etapy przygotowania danych, od rekonstrukcji wolumenu z plików DICOM do uzyskania mapy etykiet, omówiono w podrozdziale~\ref{sec:obrazowanie}.
+Ponieważ algorytmy operują wyłącznie na mapach etykiet, a nie na surowych wartościach intensywności sygnału, parametry akwizycji poszczególnych badań wpływają na wynik pomiaru jedynie pośrednio, poprzez jakość uzyskanej segmentacji.
 
 
-Analizą objęto osiem struktur kostnych: kręgi od Th11 do L5 oraz pierwszy krąg kości krzyżowej S1, wraz z~etykietami tworzącymi kanał kręgowy.
-Obydwa algorytmy wykorzystują ten zakres w~odmienny sposób: pomiar przesunięcia strzałkowego prowadzony jest dla wszystkich siedmiu poziomów (podrozdział~\ref{subsec:pary-kregow}), natomiast pomiar kąta Cobba pomija krąg S1, którego górna powierzchnia nie stanowi płytki granicznej porównywalnej z~płytkami kręgów lędźwiowych (podrozdział~\ref{subsec:cobb}).
+Analizą objęto osiem struktur kostnych: kręgi od Th11 do L5 oraz pierwszy kręg kości krzyżowej S1, wraz z etykietami tworzącymi kanał kręgowy.
+Oba algorytmy wykorzystują ten zakres w odmienny sposób: pomiar przesunięcia strzałkowego prowadzony jest dla wszystkich siedmiu poziomów międzykręgowych (podrozdział~\ref{subsec:pary-kregow}), natomiast pomiar kąta Cobba pomija krąg S1, którego górna powierzchnia nie stanowi płytki granicznej porównywalnej z płytkami granicznymi kręgów lędźwiowych (podrozdział~\ref{subsec:cobb}).
 
-Ocenę referencyjną stanowi opis radiologiczny badania.
-Opisy sformułowano w~konwencji stosowanej w~praktyce klinicznej: wskazują rozpoznanie oraz poziom, na którym je stwierdzono, a~w~części przypadków również stopień zaawansowania i~wielkość przemieszczenia wyrażoną w~milimetrach.
-Nie zawierają natomiast wartości kąta Cobba ani żadnej miary znormalizowanej, co przesądza o~charakterze prowadzonego porównania; konsekwencje tego faktu omówiono w~podrozdziale~\ref{subsec:referencje}.
-Niezależnie od opisów część badań poddano bezpośredniej ocenie lekarza specjalisty, który przeanalizował wyniki algorytmu poziom po poziomie -- materiał ten wykorzystano przy doborze wartości progowej.
-Wykorzystane badania nie zostały zebrane specjalnie na potrzeby tej pracy, lecz pochodzą z rutynowej diagnostyki.
-Oznacza to, że liczba przypadków z daną patologią nie była z góry ustalona, a opisy były tworzone przez różnych radiologów, dlatego uzyskane wyniki należy interpretować z pewną ostrożnością.
-Nie towarzyszą mu dane demograficzne pacjentów, nie jest też zbilansowany pod względem liczby przypadków prawidłowych i~patologicznych: dla skoliozy proporcja ta wynosi 42 do 25, natomiast każde badanie, dla którego wyznaczono przesunięcie, zawiera w~opisie wzmiankę o~ześlizgu, przez co dla drugiego algorytmu zbiór nie dostarcza ani jednego przypadku ujemnego na poziomie badania.
+Ocena referencyjna została zrealizowana na podstawie opisu radiologicznego badania.
+Opisy sformułowano w~konwencji stosowanej w~praktyce klinicznej: wskazują rozpoznanie oraz poziom, na podstawie którego stwierdzono schorzenie, a~w~części przypadków również stopień zaawansowania i~wielkość przemieszczenia wyrażoną w~milimetrach.
+Opis nie zawiera natomiast wartości kąta Cobba ani żadnej miary znormalizowanej, co przesądza o~charakterze prowadzonego porównania; konsekwencje tego faktu omówiono w~podrozdziale~\ref{subsec:referencje}.
+Niezależnie od opisów, część badań poddano bezpośredniej ocenie lekarza specjalisty, który przeanalizował wyniki algorytmu. Wyniki tej analizy wykorzystano przy doborze wartości progowej.
+Wykorzystane badania obrazowe pochodzą z rutynowo prowadzonej diagnostyki omawianych stanów patologicznych. Oznacza to, że liczebność poszczególnych grup diagnostycznych nie była planowana z góry, a opisy badań zostały sporządzone przez różnych radiologów. Z tego względu uzyskane wyniki należy interpretować z odpowiednią ostrożnością.
+Zbiór nie zawiera danych demograficznych pacjentów oraz nie jest zbilansowany pod względem liczby przypadków prawidłowych i patologicznych. W przypadku skoliozy liczba badań sklasyfikowanych jako dodatnie i ujemne wynosi odpowiednio 42 i 25. Dla analizy ześlizgu sytuacja jest jeszcze bardziej asymetryczna, ponieważ każde badanie uwzględnione w zbiorze zawiera w opisie radiologicznym wzmiankę o obecności przemieszczenia. W konsekwencji zbiór nie dostarcza ani jednego przypadku ujemnego na poziomie całego badania.
 
 
 \begin{table}[H]
@@ -86,17 +86,16 @@ Z~tego powodu skuteczność algorytmu detekcji kręgozmyku i~tyłozmyku oceniana
 Przyjęty wzorzec odniesienia ma ponadto ograniczenia wynikające z~samej jego natury.
 Opis radiologiczny jest oceną pojedynczego obserwatora, formułowaną na potrzeby diagnostyki, a~nie pomiaru, i~powstaje przy użyciu własnego, nieujawnionego progu rozpoznania.
 Nie zawiera wartości kąta Cobba ani znormalizowanego przesunięcia, wobec czego porównanie może dotyczyć wyłącznie zgodności klasyfikacji, nie zaś dokładności pomiaru.
-Sama metoda Cobba wykazuje przy tym udokumentowaną zmienność obserwatora (podrozdział~\ref{sec:klinika-skoliozy}), co stanowi samodzielne źródło rozbieżności, niezależne od jakości algorytmu.
+Sama metoda Cobba wykazuje przy tym udokumentowaną zmienność obserwatora (podrozdział~\ref{sec:klinika-skoliozy}), co stanowi źródło rozbieżności, niezależne od jakości algorytmu.
 
-Uzupełnieniem opisów jest bezpośrednia ocena lekarza specjalisty, który przeanalizował wyniki algorytmu detekcji kręgozmyku poziom po poziomie w~podzbiorze 14 badań.
-Materiał ten jest cenniejszy od opisu, ponieważ odnosi się wprost do poziomów wskazanych przez algorytm, w~tym do poziomów uznanych przez lekarza za prawidłowe.
-Należy jednak zaznaczyć, że ten sam podzbiór stanowi część materiału, na którym liczona jest skuteczność, przez co wyznaczony na nim próg nie jest niezależny od zbioru oceny.
+Uzupełnieniem opisów jest bezpośrednia ocena lekarza specjalisty, który przeanalizował wyniki algorytmu detekcji kręgozmyku w~podzbiorze 14 badań.
+Materiał ten ma większą wartość niż sam opis radiologiczny, ponieważ odnosi się bezpośrednio do poziomów wskazanych przez algorytm, w tym także do poziomów ocenionych przez lekarza jako prawidłowe. Należy jednak podkreślić, że podzbiór ten stanowi część zbioru wykorzystanego do oceny skuteczności algorytmu. W konsekwencji wyznaczony na jego podstawie próg decyzyjny nie jest w pełni niezależny od danych ewaluacyjnych, co może prowadzić do częściowego zawyżenia oszacowanej skuteczności.
 
 \subsection{Miary skuteczności}
 \label{subsec:miary}
 
 Zgodność wyniku algorytmu z~oceną referencyjną opisano przy użyciu czterech liczności.
-Przypadek prawdziwie dodatni ($TP$) oznacza zgodne rozpoznanie patologii przez algorytm i~radiologa, a~przypadek prawdziwie ujemny ($TN$) -- zgodne stwierdzenie jej braku.
+Przypadek prawdziwie dodatni ($TP$) oznacza zgodne rozpoznanie patologii zarówno przez algorytm jak i~radiologa, a~przypadek prawdziwie ujemny ($TN$) -- zgodne stwierdzenie jej braku.
 Przypadek fałszywie dodatni ($FP$) to wskazanie patologii tam, gdzie opis jej nie odnotowuje, natomiast przypadek fałszywie ujemny ($FN$) -- pominięcie patologii opisanej przez radiologa.
 Jednostką klasyfikacji jest badanie w~przypadku algorytmu detekcji skoliozy oraz pojedynczy poziom ruchowy w~przypadku algorytmu detekcji kręgozmyku i~tyłozmyku.
 
@@ -115,13 +114,11 @@ Czułość (wzór~\ref{eq:czulosc}) określa, jaką część przypadków patolog
     \text{dokładność} = \frac{TP + TN}{TP + TN + FP + FN}
 \end{equation}
 
-Sama dokładność nie wystarcza do oceny opisywanych algorytmów z~dwóch powodów.
-Po pierwsze, zbiór nie jest zbilansowany, a~przy nierównej liczności klas dokładność premiuje klasyfikator faworyzujący klasę liczniejszą.
-Po drugie, oba błędy mają w~zastosowaniu medycznym odmienną wagę: pominięcie patologii pozostawia pacjenta bez dalszej diagnostyki, podczas gdy fałszywy alarm prowadzi jedynie do dodatkowej weryfikacji przez lekarza.
-Ponieważ opisywane algorytmy mają pełnić funkcję przesiewową, wspierającą ocenę radiologa, a~nie ją zastępującą, przy doborze wartości progowych wyżej ceniono czułość niż swoistość.
+Sama dokładność nie jest wystarczającą miarą oceny opisywanych algorytmów z dwóch powodów. Po pierwsze, analizowany zbiór nie jest zbilansowany, a przy nierównej liczności klas dokładność może zawyżać ocenę klasyfikatora faworyzującego klasę dominującą. Po drugie, oba rodzaje błędów mają w zastosowaniu medycznym odmienną konsekwencję kliniczną. Pominięcie patologii może skutkować brakiem dalszej diagnostyki pacjenta, podczas gdy wynik fałszywie dodatni prowadzi jedynie do dodatkowej weryfikacji przez lekarza.
 
-Badania, dla których algorytm nie zwrócił wyniku wskutek błędu segmentacji, nie wchodzą do żadnej z~powyższych miar.
-Rozwiązanie takie oddziela jakość pomiaru od jakości danych wejściowych: metryki opisują skuteczność samego pomiaru, natomiast odsetek badań bez wyniku stanowi odrębną charakterystykę niezawodności całego przetwarzania.
+Ponieważ opisywane algorytmy mają pełnić funkcję narzędzi przesiewowych wspierających pracę radiologa, a nie zastępujących jego ocenę, podczas doboru wartości progowych większe znaczenie przypisano czułości niż swoistości.
+
+Badania, dla których algorytm nie zwrócił wyniku z powodu błędu segmentacji, nie są uwzględniane przy obliczaniu żadnej z przedstawionych miar. Takie podejście pozwala rozdzielić ocenę skuteczności pomiaru od oceny jakości danych wejściowych. Wyznaczone metryki opisują skuteczność algorytmu w przypadkach, dla których możliwe było przeprowadzenie pomiaru, natomiast odsetek badań zakończonych brakiem wyniku stanowi odrębną miarę niezawodności całego procesu przetwarzania.
 
 \subsection{Warunki eksperymentu}
 \label{subsec:warunki}
@@ -134,9 +131,10 @@ Pomiary wykonano na komputerze z~procesorem Apple M4 i~16~GB pamięci operacyjne
 Implementację przygotowano w~języku Python~3.13 z~wykorzystaniem bibliotek SimpleITK~2.4.1 (operacje na obrazach medycznych i~przekształcenia przestrzenne), NumPy~2.2.4 (rachunek wektorowy), OpenCV~4.11 (analiza konturów w~przekroju), scikit-image~0.25.2 (szkieletyzacja kanału kręgowego), SciPy~1.15.2 (interpolacja splajnem) oraz scikit-learn~1.7.0 (analiza składowych głównych).
 Obliczenia prowadzono jednowątkowo, bez wykorzystania akceleracji sprzętowej.
 
-Czas przetwarzania pojedynczego badania zmierzono dla całego zbioru, licząc pełny cykl uruchomienia procesu -- od wczytania mapy segmentacji po wypisanie wyniku.
-Algorytm detekcji skoliozy potrzebował na badanie mediany 1,68~s (zakres 1,60--1,81~s), a~algorytm detekcji kręgozmyku i~tyłozmyku -- 1,67~s.
-Przetworzenie całego zbioru 67 badań zajmuje zatem niespełna cztery minuty na jednym rdzeniu, co potwierdza wniosek z~analizy złożoności (podrozdział~\ref{subsec:zlozonosc-skolioza}): koszt obliczeń nie stanowi ograniczenia dla zastosowania przesiewowego, w~którym badanie analizowane jest raz, bezpośrednio po akwizycji.
+Czas przetwarzania pojedynczego badania zmierzono dla całego zbioru, uwzględniając pełny cykl działania algorytmu, od wczytania mapy segmentacji do wygenerowania wyniku.
+Mediana czasu przetwarzania wyniosła 1,68 s (zakres 1,60-1,81 s) dla algorytmu detekcji skoliozy oraz 1,67 s dla algorytmu detekcji kręgozmyku i tyłozmyku.
+
+Oznacza to, że przetworzenie całego zbioru 67 badań zajmuje na jednym rdzeniu procesora niespełna cztery minuty. Wynik ten potwierdza wnioski przedstawione w analizie złożoności (podrozdział~\ref{subsec:zlozonosc-skolioza}), wskazując, że koszt obliczeniowy nie stanowi istotnego ograniczenia w zastosowaniach przesiewowych, w których każde badanie analizowane jest jednokrotnie, bezpośrednio po akwizycji.
 
 
 \section{Wyniki algorytmu detekcji skoliozy}
@@ -310,15 +308,13 @@ Przyczyny obu rodzajów rozbieżności przeanalizowano w~podrozdziale~\ref{sec:b
 \subsection{Ocena strony skrzywienia}
 \label{subsec:strona-skolioza}
 
+W 32 opisach radiologicznych określono stronę skrzywienia. Algorytm poprawnie wskazał ją w 25 przypadkach, osiągając zgodność 78\% (tabela~\ref{tab:strona-skolioza}). Ocena ta obejmuje wyłącznie badania, dla których radiolog podał stronę skrzywienia, a zatem jedynie podzbiór przypadków patologicznych.
 
-Stronę skrzywienia podano w~32 opisach radiologicznych, algorytm wskazał stronę zgodną z~opisem w~25 przypadkach, co odpowiada zgodności 78\% (tabela~\ref{tab:strona-skolioza}).
-Ocena obejmuje wyłącznie badania, w~których radiolog podał stronę, a~więc podzbiór przypadków patologicznych.
-
-W~celu ustalenia przyczyny siedmiu rozbieżności (badania nr 15, 25, 29, 34, 43, 52 i~55) przeanalizowano kąty wyznaczone dla wszystkich par kręgów, a~nie tylko dla pary o~kącie maksymalnym.
-W~pięciu z~nich występują dwa łuki o~przeciwnych stronach.
+W~celu ustalenia przyczyny rozbieżności uzyskanych wyników dla 7 badań (badania nr 15, 25, 29, 34, 43, 52 i~55) przeanalizowano kąty wyznaczone dla wszystkich par kręgów, a~nie tylko dla pary o~kącie maksymalnym.
+W~pięciu z~nich stwierzono występowanie dwóch łuków o~przeciwnych stronach.
 W~badaniach nr 34 i~52 prawostronny łuk Th12--L3 (8,06\degree{} i~8,76\degree{}) przewyższa o~0,2\degree{} i~0,6\degree{} lewostronny łuk L3--L5 (7,87\degree{} i~8,13\degree{}), którego strona jest zgodna z~opisem; podobny układ występuje w~badaniu nr 43 (Th11--L2: 5,09\degree{}, L2--L4: 2,91\degree{}).
 W~badaniach nr 25 i~55 układ jest odwrotny: dolny łuk prawostronny L3--L5 (3,72\degree{} i~6,89\degree{}) przeważa nad górnym łukiem lewostronnym (Th11--L3: 3,42\degree{}, L1--L4: 5,73\degree{}).
-Algorytm raportuje stronę pary o~największym kącie, dlatego w~takich przypadkach wskazuje łuk inny niż opisany przez radiologa.
+Algorytm raportuje stronę pary o~największym kącie, dlatego w~takich przypadkach wskazuje wynik inny niż odnotowany się w opisie radiologicznym.
 Ten sam układ dwóch przeciwnych łuków (Th12--L2: 5,87\degree{} prawostronnie, L1--L5: 4,12\degree{} lewostronnie) występuje w~wyłączonym badaniu nr 23, co sugeruje, że jego opis może dotyczyć skrzywienia esowatego.
 
 Dwóch pozostałych rozbieżności nie wyjaśnia obecność drugiego łuku.
@@ -348,11 +344,11 @@ Wyniki te pokazują, że przy skrzywieniu dwułukowym pojedyncza etykieta strony
 \subsection{Zestawienie pomiarów}
 \label{subsec:zestawienie-kregozmyk}
 
-Algorytm zwraca znormalizowane przesunięcie $s$ (wzór~\ref{eq:normalized-slip}) wraz z~kierunkiem ześlizgu dla każdego z~siedmiu poziomów ruchowych, od Th11/Th12 do L5/S1.
-W~tabeli~\ref{tab:wyniki-kregozmyk} dla każdego badania podano poziomy opisane przez radiologa jako patologiczne oraz poziomy, na których przesunięcie przekroczyło wartość progową właściwą dla wskazanego kierunku, wraz z~wartością $s$ (podrozdział~\ref{subsec:prog-kregozmyk}).
+W wyniku działania algorytmu zwraca jest znormalizowana wartość przesunięcia $s$ (wzór~\ref{eq:normalized-slip}) wraz z~kierunkiem ześlizgu dla każdego z~siedmiu poziomów ruchowych, od Th11/Th12 do L5/S1.
+W~tabeli~\ref{tab:wyniki-kregozmyk} dla każdego badania wskazano poziomy opisane przez radiologa jako patologiczne oraz poziomy, gdzie przesunięcie przekroczyło wartość progową właściwą dla wskazanego kierunku, wraz z~wartością $s$ (podrozdział~\ref{subsec:prog-kregozmyk}).
 Ostatnie trzy kolumny podają liczbę poziomów wykrytych zgodnie z~opisem (TP), poziomów wykrytych, lecz nieopisanych (FP), oraz poziomów opisanych, lecz niewykrytych (FN); ich sumy odpowiadają macierzy pomyłek przedstawionej w~podrozdziale~\ref{subsec:skutecznosc-kregozmyk}.
 Dla badań nr 8 i~28 algorytm nie zwrócił wyniku z~powodu błędu segmentacji.
-Ponieważ zbiór nie zawiera badań bez opisanego ześlizgu (podrozdział~\ref{subsec:referencje}), jednostką oceny jest poziom ruchowy, a~nie całe badanie.
+Ponieważ zbiór nie zawiera badań bez opisanego ześlizgu (podrozdział~\ref{subsec:referencje}), jednostką oceny jest poziom ruchowy, a~nie wynik całego badania.
 
 \begingroup
 \footnotesize
@@ -515,9 +511,10 @@ Obydwa przyjęte progi leżą powyżej 9.~decyla wartości $s$ na poziomach nieo
 \subsection{Skuteczność klasyfikacji}
 \label{subsec:skutecznosc-kregozmyk}
 
-Macierz pomyłek dla przyjętych progów, 0,06 dla kręgozmyku i~0,10 dla tyłozmyku, przedstawiono w~tabeli~\ref{tab:macierz-kregozmyk}.
-Spośród 455 poziomów ruchowych algorytm sklasyfikował zgodnie z~opisem radiologicznym 421, co odpowiada dokładności 0,925.
-Wykrył 64 z~79 poziomów opisanych jako patologiczne (czułość 0,810) i~poprawnie uznał za prawidłowe 357 z~376 pozostałych (swoistość 0,949), a~spośród 83 poziomów, które wskazał, radiolog opisał 64.
+Macierz pomyłek dla przyjętych progów, odpowiednio 0,06 dla kręgozmyku i 0,10 dla tyłozmyku, przedstawiono w tabeli~\ref{tab:macierz-kregozmyk}.
+Spośród 455 poziomów ruchowych algorytm sklasyfikował zgodnie z opisem radiologicznym 421, co odpowiada dokładności 0,925.
+Wykrył 64 z 79 poziomów opisanych jako patologiczne (czułość 0,810) oraz poprawnie uznał za prawidłowe 357 z 376 poziomów niepatologicznych (swoistość 0,949).
+Łącznie algorytm wskazał 83 poziomy jako patologiczne, z czego 64 zostały również opisane przez radiologa.
 
 \begin{table}[H]
     \centering
@@ -539,8 +536,7 @@ Wykrył 64 z~79 poziomów opisanych jako patologiczne (czułość 0,810) i~popra
 \section{Analiza przypadków błędnie sklasyfikowanych}
 \label{sec:bledy}
 
-Celem analizy przedstawionej w~tym podrozdziale jest ustalenie, czy rozbieżności między wynikiem algorytmu a~opisem radiologicznym mają charakter systematyczny oraz czy ich źródłem jest sam algorytm, jakość segmentacji, czy też sposób, w~jaki skonstruowano dane referencyjne.
-Dla każdego z~algorytmów omówiono wybrane przypadki fałszywie dodatnie i~fałszywie ujemne, a~także badania, dla których pomiar nie przyniósł wiarygodnego wyniku, zestawiając wynik pomiaru z~obrazem badania i~mapą segmentacji.
+Niniejszy podrozdział poświęcono analizie przypadków, w których wynik algorytmu był niezgodny z opisem radiologicznym lub nie mógł zostać wyznaczony. Analiza ma na celu ocenę, czy obserwowane rozbieżności mają charakter systematyczny oraz określenie, w jakim stopniu wynikają one z ograniczeń algorytmu, jakości segmentacji lub właściwości danych referencyjnych. Dla każdego z algorytmów omówiono wybrane przypadki fałszywie dodatnie i fałszywie ujemne, a także badania, dla których pomiar nie dostarczył wiarygodnego wyniku, zestawiając rezultat analizy z obrazem badania oraz odpowiadającą mu mapą segmentacji.
 
 \subsection{Algorytm detekcji skoliozy}
 \label{subsec:bledy-skolioza}
@@ -742,9 +738,9 @@ W~badaniu nr 8 pomiar nie był możliwy, ponieważ segmentacja nie obejmuje koś
 \label{sec:dyskusja}
 
 Algorytm detekcji kręgozmyku i~tyłozmyku osiągnął dokładność 0,925 przy swoistości 0,949, natomiast algorytm detekcji skoliozy -- dokładność 0,712, co wynika przede wszystkim z~płynnej granicy między normą a~niewielkim skrzywieniem.
-Ocenę obu algorytmów należy jednak odczytywać z~uwzględnieniem charakteru wzorca odniesienia: opis radiologiczny jest subiektywną oceną jednego lekarza, formułowaną bez podania wartości kąta czy przesunięcia i~przy użyciu własnego, nieujawnionego progu rozpoznania.
+Ocenę obu algorytmów należy jednak odczytywać z~uwzględnieniem charakteru wzorca odniesienia: opis radiologiczny jest subiektywną oceną jednego lekarza, formułowaną bez podania wartości kąta czy przesunięcia i~przy definiowanym subiektywnie progu rozpoznania.
 Ocena parametrów geometrycznych kręgosłupa obarczona jest zmiennością międzyobserwatorską, wobec czego to samo badanie opisane przez innego radiologa mogłoby zostać sklasyfikowane odmiennie.
 W~zebranym materiale przejawia się to zarówno w~niejednoznacznych określeniach \enquote{niewielka} czy \enquote{dyskretna} skolioza, stosowanych przy bardzo różnych kątach, jak i~w~ześlizgach widocznych na obrazie i~wskazanych przez algorytm, lecz pominiętych w~opisie.
 Drugim czynnikiem ograniczającym jest jakość segmentacji, ponieważ algorytmy operują na mapie etykiet, a~nie na samym obrazie -- brak kości krzyżowej (badanie nr 8), zniekształcony trzon (nr 21) czy błędna segmentacja przy masywnej rotoskoliozie (nr 28) przenoszą się bezpośrednio na wynik.
-Największą trudność sprawiają przypadki graniczne -- skrzywienia o~kącie bliskim progu oraz przesunięcia o~wartości $s$ między 0,06 a~0,10 -- które także lekarz weryfikujący wyniki oceniał jako niejednoznaczne.
-Mimo tych ograniczeń oba algorytmy stanowią wartościowe narzędzie wspomagające: analiza pojedynczego badania trwa około 1,7~s, wynik ma postać powtarzalnej wartości liczbowej.
+Największą trudność sprawiają przypadki graniczne -- skrzywienia o~progowej wartości kąta oraz przesunięcia o~wartości $s$ między 0,06 a~0,10 -- które także lekarz radiolog  oceniał jako niejednoznaczne.
+Mimo tych ograniczeń oba algorytmy stanowią wartościowe narzędzie wspomagające: analiza pojedynczego badania trwa około 1,7~s,  a wynik ma postać powtarzalnej wartości liczbowej.
