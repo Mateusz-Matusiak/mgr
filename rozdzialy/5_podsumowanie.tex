@@ -1,5 +1,37 @@
 \chapter{Podsumowanie}
 \label{chap:podsumowanie}
 
+Celem pracy było zaprojektowanie, implementacja oraz ocena algorytmów klasyfikujących badania obrazowe odcinka lędźwiowego kręgosłupa jako prawidłowe lub patologiczne.
+Analizą objęto trzy jednostki chorobowe o~wyraźnym charakterze geometrycznym: skoliozę, kręgozmyk oraz tyłozmyk.
+Danymi wejściowymi były mapy segmentacji badań rezonansu magnetycznego w~formacie NIfTI, obejmujące kręgi od Th11 do S1 oraz struktury kanału kręgowego.
+Świadomie zrezygnowano z~metod uczenia maszynowego na rzecz analizy geometrycznej, dzięki czemu wynik każdego z~algorytmów jest wielkością interpretowalną i~bezpośrednio powiązaną z~parametrami stosowanymi w~praktyce klinicznej.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+W~ramach pracy opracowano wspólny potok przetwarzania, na którym oparto oba algorytmy.
+Pierwszym jego etapem jest rekonstrukcja linii środkowej kanału kręgowego z~wykorzystaniem operacji morfologicznych, szkieletyzacji i~interpolacji splajnem sześciennym.
+Na jej podstawie dla każdego kręgu wyznaczany jest lokalny układ współrzędnych o~osiach zgodnych z~kierunkami anatomicznymi.
+W~płaszczyźnie tego układu wykonywany jest dwuwymiarowy przekrój kręgu, w~którym wyznaczane są cztery punkty narożne trzonu, przeliczane następnie do fizycznego układu współrzędnych pacjenta.
+Dzięki temu pomiar nie zależy od ułożenia pacjenta ani od orientacji wolumenu.
+
+Algorytm detekcji skoliozy (rozdział~\ref{chap:skolioza}) wykorzystuje przekroje w~płaszczyźnie czołowej.
+Dla każdej pary kręgów z~zakresu Th11--L5 punkty narożne rzutowane są na wspólną płaszczyznę dopasowaną metodą SVD, co pozwala uwzględnić trójwymiarowy charakter deformacji, a~następnie wyznaczany jest kąt między płytkami granicznymi.
+Wynikiem jest maksymalny kąt Cobba wraz z~parą kręgów krańcowych i~stroną skrzywienia.
+
+Algorytm detekcji kręgozmyku i~tyłozmyku (rozdział~\ref{chap:kregozmyk}) korzysta z~tych samych etapów wstępnych, lecz przekrój wykonywany jest w~płaszczyźnie strzałkowej, a~analizie poddawane są wyłącznie pary kręgów sąsiednich, od Th11/Th12 do L5/S1.
+Dla każdego poziomu ruchowego wyznaczane jest znormalizowane przesunięcie strzałkowe $s$, czyli rzut wektora łączącego tylne narożniki obu trzonów na kierunek górnej płytki granicznej kręgu dolnego, odniesiony do jej długości, a~znak rzutu określa kierunek ześlizgu.
+Pomiar odpowiada konstrukcji stosowanej przez radiologa w~metodzie Meyerdinga, a~normalizacja uniezależnia go od wielkości kręgów.
+
+Ocenę skuteczności (rozdział~\ref{chap:wyniki}) przeprowadzono na zbiorze 67 badań, a~wzorcem odniesienia był opis radiologiczny, uzupełniony w~części przypadków oceną lekarza specjalisty.
+Dla algorytmu detekcji skoliozy przyjęto próg 8,0\degree{}, przy którym uzyskano czułość 0,707, swoistość 0,720 i~dokładność 0,712.
+Stronę skrzywienia wskazano zgodnie z~opisem w~25 z~32 badań, a~większość rozbieżności wynikała z~obecności dwóch łuków o~przeciwnych stronach i~zbliżonym kącie.
+Algorytm detekcji kręgozmyku i~tyłozmyku oceniono na 455 poziomach ruchowych, z~których 79 opisano jako patologiczne.
+Ze względu na systematycznie większe tło przesunięcia tylnego, wynikające z~lordozy lędźwiowej, przyjęto osobne progi: 0,06 dla kręgozmyku i~0,10 dla tyłozmyku, uzyskując czułość 0,810, swoistość 0,949 i~dokładność 0,925.
+Przetworzenie pojedynczego badania zajmuje około 1,7~s, wobec czego koszt obliczeniowy nie ogranicza zastosowania algorytmów w~analizie przesiewowej.
+
+Analiza przypadków niezgodnych z~opisem wykazała, że znaczna część rozbieżności nie wynika z~błędu pomiaru.
+Pominięte skrzywienia mają kąt poniżej 8\degree{} i~w~opisach określane są jako niewielkie lub dyskretne, a~część wyników fałszywie dodatnich odpowiada zmianom widocznym na obrazie, lecz nieodnotowanym w~opisie.
+Drugim źródłem błędów jest jakość segmentacji, której wady przenoszą się bezpośrednio na wynik.
+Uzyskane miary należy przy tym traktować ostrożnie, ponieważ progi wyznaczono na tym samym zbiorze, na którym oceniano skuteczność, a~wzorzec odniesienia ma charakter jakościowy i~obarczony jest zmiennością międzyobserwatorską.
+
+Cel pracy został osiągnięty.
+Opracowane algorytmy na podstawie samej mapy segmentacji dostarczają powtarzalnych, liczbowych miar deformacji kręgosłupa i~mogą pełnić funkcję narzędzia wspomagającego radiologa, wskazującego badania i~poziomy ruchowe wymagające uwagi.
+Za kierunki dalszych prac można uznać weryfikację progów na niezależnym zbiorze z~ilościową oceną referencyjną, automatyczne wykrywanie segmentacji złej jakości oraz raportowanie wszystkich łuków w~skrzywieniach wielołukowych.

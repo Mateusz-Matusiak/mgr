@@ -71,9 +71,10 @@ Z tego powodu wynik uzyskany proponowaną metodą należy traktować jako miarę
 Jednocześnie analiza oparta na trójwymiarowej segmentacji eliminuje błąd rzutowania właściwy dwuwymiarowemu radiogramowi, co stanowi potencjalną przewagę nad klasycznym pomiarem.
 
 \section{Założenia funkcjonalne i niefunkcjonalne}
+\label{sec:skolioza-zalozenia}
 W celu zrealizowania postawionego celu pracy zdefiniowano szereg wymagań funkcjonalnych oraz niefunkcjonalnych.
 
-Wymagania funkcjonalne:
+Założone wymagania funkcjonalne:
 
 \begin{itemize}
     \item \textbf{Obsługa wejściowych danych wolumetrycznych} -- system musi umożliwiać wczytanie trójwymiarowych obrazów medycznych (mapy segmentacji) w standardzie NIfTI\cite{nifti} (.nii.gz), reprezentujących odcinek lędźwiowy kręgosłupa wraz z kanałem kręgowym.
@@ -86,7 +87,7 @@ Wymagania funkcjonalne:
     \item \textbf{Wizualizacja i eksport wyników} -- system musi generować dane wynikowe i pośrednie w formacie umożliwiającym ich wizualną weryfikację przez lekarza (np. pliki znaczników JSON kompatybilne z oprogramowaniem 3D Slicer), zawierające punkty, linie pomiarowe oraz wektory.
 \end{itemize}
 
-Wymagania niefunkcjonalne:
+Stawiane wymagania niefunkcjonalne:
 \begin{itemize}
     \item \textbf{Odporność na nieciągłość danych} -- algorytm powinien zachowywać poprawność działania w przypadku występowania lokalnych przerw lub ubytków w segmentacji kanału kręgowego.
     \item \textbf{Powtarzalność wyników} -- dla identycznych danych wejściowych algorytm powinien każdorazowo zwracać ten sam wynik pomiarowy.
