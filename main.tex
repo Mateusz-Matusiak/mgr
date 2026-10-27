@@ -11,10 +11,13 @@
 \usepackage{xurl} % For URLs in bibliography (laduje url, pozwala lamac adresy w dowolnym miejscu)
 \usepackage[
     twoside=true,
-    left=3cm, % inner
-    right=2cm, % outer
+    left=2.5cm, % inner
+    right=2.5cm, % outer
     top=2.5cm,
     bottom=2.5cm,
+    headheight=15pt,
+    headsep=0.8cm, % górna krawędź tekstu nagłówka 1,25 cm od krawędzi strony
+    footskip=1.25cm, % stopka 1,25 cm od krawędzi strony
 ]{geometry}
 \usepackage{gensymb} % Degree symbol
 \usepackage{fancyhdr} % Nagłówki i stopki
@@ -70,17 +73,12 @@
 \renewcommand{\lstlistlistingname}{Spis listingów} % Zmiana nazwy spisu listingów
 
 
-\setlength{\headheight}{1.25cm}
-\setlength{\footskip}{1.25cm}
 \setlength{\parindent}{0.5cm} % Ustawia wcięcie akapitu
 \usepackage{indentfirst}
 
 \linespread{1.5} %interlinia
 \renewcommand{\familydefault}{\sfdefault}
 
-
-\setlength{\headheight}{15pt}
-\addtolength{\topmargin}{-2.5pt}
 
 % Formatowanie nagłówków i stopek
 \pagestyle{fancy}
@@ -122,7 +120,7 @@
 \begin{document}
 
 % Strona tytułowa
-\includepdf[pages={1}]{strona_tytulowa.pdf}
+\includepdf[pages={1}]{tytulowa.pdf}
 
 % Pusta strona po stronie tytułowej
 \newpage

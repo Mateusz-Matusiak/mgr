@@ -447,7 +447,7 @@ W pierwszej kolejności uzyskany przekrój poddawany jest operacji wypełniania 
 
 Następnie obraz poddawany jest operacji morfologicznego otwarcia (ang. morphological opening) \cite{morph-opening}.
 Operacja ta pozwala na usunięcie niewielkich artefaktów oraz izolowanych struktur powstałych na etapie segmentacji.
-W implementacji wykorzystano kwadratowy element strukturalny o rozmiarze 5×55 \times 55×5 pikseli oraz dwie iteracje przekształcenia.
+W implementacji wykorzystano kwadratowy element strukturalny o rozmiarze $5 \times 5$ pikseli oraz dwie iteracje przekształcenia.
 Tak dobrane parametry umożliwiają wygładzenie granic trzonu kręgu przy zachowaniu jego ogólnego kształtu geometrycznego oraz eliminację drobnych obiektów niebędących częścią analizowanej struktury:
 \begin{equation}
     I_{cleaned} = (I_{flat} \circ B)
@@ -465,11 +465,11 @@ Pozwala on na zredukowanie informacji o całej masie kręgu do zbioru punktów b
     \label{fig:edge}
 \end{figure}
 
-Z obrazu krawędziowego wyznaczany jest następnie kontur zewnętrzny z wykorzystaniem funkcji \texttt{cv2.findContours}. Zastosowano tryb \texttt{RETR_EXTERNAL}, ograniczający analizę do najbardziej zewnętrznego obrysu obiektu, oraz metodę aproksymacji \texttt{CHAIN_APPROX_SIMPLE}, redukującą liczbę punktów reprezentujących kontur przy zachowaniu jego geometrii.
+Z obrazu krawędziowego wyznaczany jest następnie kontur zewnętrzny z wykorzystaniem funkcji \texttt{cv2.findContours}. Zastosowano tryb \texttt{RETR\_EXTERNAL}, ograniczający analizę do najbardziej zewnętrznego obrysu obiektu, oraz metodę aproksymacji \texttt{CHAIN\_APPROX\_SIMPLE}, redukującą liczbę punktów reprezentujących kontur przy zachowaniu jego geometrii.
 
 Aby zniwelować wpływ lokalnych nierówności powierzchni trzonu kręgowego, algorytm wyznacza otoczkę wypukłą (ang. \textit{Convex Hull}) z wykorzystaniem metody zawartej w bibliotece \texttt{cv2.convexHull(contours)}.
 
-Następnie kontur poddawany jest aproksymacji wielokątowej z wykorzystaniem algorytmu Douglasa-Peuckera \cite{douglas-peucker}. Parametr aproksymacji ε\varepsilonε ustalono na poziomie 1\% długości konturu. Operacja ta prowadzi do redukcji liczby punktów opisujących obrys przy zachowaniu jego podstawowych cech geometrycznych, co ułatwia dalszą identyfikację punktów narożnych trzonu kręgu.
+Następnie kontur poddawany jest aproksymacji wielokątowej z wykorzystaniem algorytmu Douglasa-Peuckera \cite{douglas-peucker}. Parametr aproksymacji $\varepsilon$ ustalono na poziomie 1\% długości konturu. Operacja ta prowadzi do redukcji liczby punktów opisujących obrys przy zachowaniu jego podstawowych cech geometrycznych, co ułatwia dalszą identyfikację punktów narożnych trzonu kręgu.
 
 Ostatnim etapem analizy geometrycznej jest selekcja czterech kluczowych punktów narożnych z uzyskanego wielokąta aproksymacyjnego.
 W tym celu zaimplementowano algorytm oparty na analizie sumy i różnicy współrzędnych $[x,y]$ punktów konturu, co pozwala na ich jednoznaczną klasyfikację topologiczną (lewy górny, prawy górny, lewy dolny, prawy dolny).
