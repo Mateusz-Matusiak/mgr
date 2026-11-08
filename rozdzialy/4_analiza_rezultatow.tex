@@ -2,7 +2,7 @@
 \label{chap:wyniki}
 
 Niniejszy rozdział przedstawia analizę działania algorytmów opisanych w~rozdziałach~\ref{chap:skolioza} oraz~\ref{chap:kregozmyk}.
-Analiza obejmowała uruchomionie obydwu przypadków na tym samym zbiorze map segmentacji, a~uzyskane wyniki zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
+Analiza obejmowała uruchomienie obydwu przypadków na tym samym zbiorze map segmentacji, a~uzyskane wyniki zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
 Rozdział obejmuje charakterystykę wykorzystanego zbioru badań oraz przyjętej metodyki oceny. Następnie przedstawiono wyniki każdego z~algorytmów osobno wraz z~procedurą doboru wartości progowej oddzielającej przypadki prawidłowe od patologicznych.
 Analizę zamyka lista przypadków sklasyfikowanych niezgodnie z~opisem radiologicznym wraz z omówieniem zidentyfikowanych źródeł rozbieżności.
 
@@ -311,7 +311,7 @@ Przyczyny obu rodzajów rozbieżności przeanalizowano w~podrozdziale~\ref{sec:b
 W 32 opisach radiologicznych określono stronę skrzywienia. Algorytm poprawnie wskazał ją w 25 przypadkach, osiągając zgodność 78\% (tabela~\ref{tab:strona-skolioza}). Ocena ta obejmuje wyłącznie badania, dla których radiolog podał stronę skrzywienia, a zatem jedynie podzbiór przypadków patologicznych.
 
 W~celu ustalenia przyczyny rozbieżności uzyskanych wyników dla 7 badań (badania nr 15, 25, 29, 34, 43, 52 i~55) przeanalizowano kąty wyznaczone dla wszystkich par kręgów, a~nie tylko dla pary o~kącie maksymalnym.
-W~pięciu z~nich stwierzono występowanie dwóch łuków o~przeciwnych stronach.
+W~pięciu z~nich stwierdzono występowanie dwóch łuków o~przeciwnych stronach.
 W~badaniach nr 34 i~52 prawostronny łuk Th12--L3 (8,06\degree{} i~8,76\degree{}) przewyższa o~0,2\degree{} i~0,6\degree{} lewostronny łuk L3--L5 (7,87\degree{} i~8,13\degree{}), którego strona jest zgodna z~opisem; podobny układ występuje w~badaniu nr 43 (Th11--L2: 5,09\degree{}, L2--L4: 2,91\degree{}).
 W~badaniach nr 25 i~55 układ jest odwrotny: dolny łuk prawostronny L3--L5 (3,72\degree{} i~6,89\degree{}) przeważa nad górnym łukiem lewostronnym (Th11--L3: 3,42\degree{}, L1--L4: 5,73\degree{}).
 Algorytm raportuje stronę pary o~największym kącie, dlatego w~takich przypadkach wskazuje wynik inny niż odnotowany się w opisie radiologicznym.
