@@ -43,7 +43,7 @@ Zbiór nie zawiera danych demograficznych pacjentów oraz nie jest zbilansowany 
         badania z wyznaczonym kątem Cobba              & 67               \\
         pomiary odrzucone jako niewiarygodne           & 1                \\
         badania wykorzystane w~ocenie skuteczności     & 66               \\
-        opisy wskazujące stronę skrzywienia            & 34               \\
+        opisy wskazujące stronę skrzywienia            & 32               \\
         \hline
         \multicolumn{2}{l}{\textit{algorytm detekcji kręgozmyku i tyłozmyku}} \\
         badania z wyznaczonym przesunięciem            & 65               \\
@@ -99,8 +99,8 @@ Przypadek prawdziwie dodatni ($TP$) oznacza zgodne rozpoznanie patologii zarówn
 Przypadek fałszywie dodatni ($FP$) to wskazanie patologii tam, gdzie opis jej nie odnotowuje, natomiast przypadek fałszywie ujemny ($FN$) -- pominięcie patologii opisanej przez radiologa.
 Jednostką klasyfikacji jest badanie w~przypadku algorytmu detekcji skoliozy oraz pojedynczy poziom ruchowy w~przypadku algorytmu detekcji kręgozmyku i~tyłozmyku.
 
-Na podstawie tych liczności wyznaczono trzy miary.
-Czułość (wzór~\ref{eq:czulosc}) określa, jaką część przypadków patologicznych algorytm wykrył, swoistość (wzór~\ref{eq:swoistosc}) -- jaką część przypadków prawidłowych poprawnie uznał za prawidłowe, a~dokładność (wzór~\ref{eq:dokladnosc}) -- udział wszystkich rozstrzygnięć zgodnych z~referencją.
+Na podstawie tych liczności wyznaczono cztery miary.
+Czułość (wzór~\ref{eq:czulosc}) określa, jaką część przypadków patologicznych algorytm wykrył, swoistość (wzór~\ref{eq:swoistosc}) -- jaką część przypadków prawidłowych poprawnie uznał za prawidłowe, dokładność (wzór~\ref{eq:dokladnosc}) -- udział wszystkich rozstrzygnięć zgodnych z~referencją, a~współczynnik korelacji Matthewsa $MCC$ (wzór~\ref{eq:mcc}) -- zgodność klasyfikacji z~referencją ujętą łącznie we wszystkich czterech polach macierzy pomyłek.
 
 \begin{equation} \label{eq:czulosc}
     \text{czułość} = \frac{TP}{TP + FN}
@@ -114,7 +114,18 @@ Czułość (wzór~\ref{eq:czulosc}) określa, jaką część przypadków patolog
     \text{dokładność} = \frac{TP + TN}{TP + TN + FP + FN}
 \end{equation}
 
+\begin{equation} \label{eq:mcc}
+    MCC = \frac{TP \cdot TN - FP \cdot FN}{\sqrt{(TP + FP)(TP + FN)(TN + FP)(TN + FN)}}
+\end{equation}
+
 Sama dokładność nie jest wystarczającą miarą oceny opisywanych algorytmów z dwóch powodów. Po pierwsze, analizowany zbiór nie jest zbilansowany, a przy nierównej liczności klas dokładność może zawyżać ocenę klasyfikatora faworyzującego klasę dominującą. Po drugie, oba rodzaje błędów mają w zastosowaniu medycznym odmienną konsekwencję kliniczną. Pominięcie patologii może skutkować brakiem dalszej diagnostyki pacjenta, podczas gdy wynik fałszywie dodatni prowadzi jedynie do dodatkowej weryfikacji przez lekarza.
+
+Z~tego względu jako miarę zbiorczą przyjęto współczynnik korelacji Matthewsa.
+Przyjmuje on wartości z~przedziału od $-1$ do $1$, gdzie $1$ oznacza pełną zgodność z~referencją, $0$ -- wynik nie lepszy od losowego, a~$-1$ -- pełną niezgodność.
+W~odróżnieniu od dokładności i~miary $F_1$ współczynnik ten osiąga wysoką wartość tylko wtedy, gdy klasyfikator dobrze radzi sobie jednocześnie z~przypadkami patologicznymi i~prawidłowymi, proporcjonalnie do liczności obu klas~\cite{chicco_mcc}.
+Nie zależy też od tego, którą klasę uznano za dodatnią.
+Chicco i~Jurman wykazali, że dokładność i~miara $F_1$ mogą na zbiorach niezbilansowanych dawać zawyżoną ocenę, podczas gdy $MCC$ pozostaje wiarygodny, i~zalecają go jako podstawową miarę oceny klasyfikacji binarnej~\cite{chicco_mcc}.
+Ma to znaczenie zwłaszcza dla algorytmu detekcji kręgozmyku i~tyłozmyku, gdzie poziomy patologiczne stanowią jedynie 79 z~455 ocenianych poziomów.
 
 Ponieważ opisywane algorytmy mają pełnić funkcję narzędzi przesiewowych wspierających pracę radiologa, a nie zastępujących jego ocenę, podczas doboru wartości progowych większe znaczenie przypisano czułości niż swoistości.
 
@@ -251,6 +262,7 @@ Wybór spośród tych wartości sprowadza się zatem do ustalenia proporcji mię
 Progi 6,0\degree{} i~7,5\degree{} zapewniają najwyższą czułość, lecz swoistość spada przy nich do 0,440 i~0,640, a~więc co najmniej jedno na trzy badania prawidłowe zostałoby oznaczone jako patologiczne.
 Przyjęto wartość 8,0\degree{}, przy której czułość wynosi 0,707, a~swoistość 0,720.
 Jest to najniższy z~rozpatrywanych progów, przy którym obie miary przekraczają 0,7, co odpowiada przesiewowemu charakterowi algorytmu opisanemu w~podrozdziale~\ref{subsec:miary}.
+Współczynnik $MCC$ wynosi przy tym progu 0,416 i~jest tylko nieznacznie niższy od najwyższej wartości w~tabeli, równej 0,430 dla progu 8,5\degree{}, przy której czułość spada jednak do 0,683.
 
 Najwyższą dokładność, równą 0,727, uzyskuje się w~wąskim przedziale wokół 7,9\degree{}, położonym między trzema badaniami o~kątach 7,91--7,95\degree{}.
 Taki próg byłby dopasowany do konkretnych przypadków w~zbiorze, a~nie do ogólnej właściwości pomiaru, dlatego go nie przyjęto.
@@ -263,20 +275,20 @@ Analiza przypadków błędnie sklasyfikowanych (podrozdział~\ref{sec:bledy}) ws
     \caption{Skuteczność klasyfikacji w zależności od przyjętej wartości progowej}
     \label{tab:progi-skolioza}
     \small
-    \begin{tabular}{cccccccc}
+    \begin{tabular}{ccccccccc}
         \hline
-        \textbf{Próg [\degree]} & \textbf{TP} & \textbf{FP} & \textbf{TN} & \textbf{FN} & \textbf{Czułość} & \textbf{Swoistość} & \textbf{Dokładność} \\
+        \textbf{Próg [\degree]} & \textbf{TP} & \textbf{FP} & \textbf{TN} & \textbf{FN} & \textbf{Czułość} & \textbf{Swoistość} & \textbf{Dokładność} & \textbf{MCC} \\
         \hline
-        6,0                     & 36          & 14          & 11          & 5           & 0,878            & 0,440              & 0,712               \\
-        7,0                     & 31          & 10          & 15          & 10          & 0,756            & 0,600              & 0,697               \\
-        7,5                     & 31          & 9           & 16          & 10          & 0,756            & 0,640              & 0,712               \\
-        8,0                     & 29          & 7           & 18          & 12          & 0,707            & 0,720              & 0,712               \\
-        8,5                     & 28          & 6           & 19          & 13          & 0,683            & 0,760              & 0,712               \\
-        9,0                     & 23          & 6           & 19          & 18          & 0,561            & 0,760              & 0,636               \\
-        9,5                     & 22          & 5           & 20          & 19          & 0,537            & 0,800              & 0,636               \\
-        10,0                    & 22          & 5           & 20          & 19          & 0,537            & 0,800              & 0,636               \\
-        11,0                    & 19          & 2           & 23          & 22          & 0,463            & 0,920              & 0,636               \\
-        12,0                    & 14          & 1           & 24          & 27          & 0,341            & 0,960              & 0,576               \\
+        6,0                     & 36          & 14          & 11          & 5           & 0,878            & 0,440              & 0,712 & 0,360 \\\\
+        7,0                     & 31          & 10          & 15          & 10          & 0,756            & 0,600              & 0,697 & 0,356 \\\\
+        7,5                     & 31          & 9           & 16          & 10          & 0,756            & 0,640              & 0,712 & 0,393 \\\\
+        8,0                     & 29          & 7           & 18          & 12          & 0,707            & 0,720              & 0,712 & 0,416 \\\\
+        8,5                     & 28          & 6           & 19          & 13          & 0,683            & 0,760              & 0,712 & 0,430 \\\\
+        9,0                     & 23          & 6           & 19          & 18          & 0,561            & 0,760              & 0,636 & 0,314 \\\\
+        9,5                     & 22          & 5           & 20          & 19          & 0,537            & 0,800              & 0,636 & 0,332 \\\\
+        10,0                    & 22          & 5           & 20          & 19          & 0,537            & 0,800              & 0,636 & 0,332 \\\\
+        11,0                    & 19          & 2           & 23          & 22          & 0,463            & 0,920              & 0,636 & 0,399 \\\\
+        12,0                    & 14          & 1           & 24          & 27          & 0,341            & 0,960              & 0,576 & 0,349 \\\\
 \hline
     \end{tabular}
 \end{table}
@@ -302,6 +314,7 @@ Analiza przypadków błędnie sklasyfikowanych (podrozdział~\ref{sec:bledy}) ws
 
 Macierz pomyłek dla przyjętego progu 8,0\degree{} przedstawiono w~tabeli~\ref{tab:macierz-skolioza}.
 Algorytm sklasyfikował zgodnie z~opisem radiologicznym 47 z~66 badań, co odpowiada dokładności 0,712, przy czułości 0,707 i~swoistości 0,720.
+Współczynnik korelacji Matthewsa wynosi 0,416, co wskazuje na umiarkowaną zgodność klasyfikacji z~opisem radiologicznym.
 Błędy nie rozkładają się równomiernie: przypadków fałszywie ujemnych jest 12, a~fałszywie dodatnich 7.
 Wszystkie pominięte skrzywienia mają kąt w~przedziale 3,58--7,95\degree{}, natomiast fałszywe alarmy obejmują wartości od 8,26\degree{} do 17,82\degree{}.
 Przyczyny obu rodzajów rozbieżności przeanalizowano w~podrozdziale~\ref{sec:bledy}.
@@ -314,7 +327,7 @@ W~celu ustalenia przyczyny rozbieżności uzyskanych wyników dla 7 badań (bada
 W~pięciu z~nich stwierdzono występowanie dwóch łuków o~przeciwnych stronach.
 W~badaniach nr 34 i~52 prawostronny łuk Th12--L3 (8,06\degree{} i~8,76\degree{}) przewyższa o~0,2\degree{} i~0,6\degree{} lewostronny łuk L3--L5 (7,87\degree{} i~8,13\degree{}), którego strona jest zgodna z~opisem; podobny układ występuje w~badaniu nr 43 (Th11--L2: 5,09\degree{}, L2--L4: 2,91\degree{}).
 W~badaniach nr 25 i~55 układ jest odwrotny: dolny łuk prawostronny L3--L5 (3,72\degree{} i~6,89\degree{}) przeważa nad górnym łukiem lewostronnym (Th11--L3: 3,42\degree{}, L1--L4: 5,73\degree{}).
-Algorytm raportuje stronę pary o~największym kącie, dlatego w~takich przypadkach wskazuje wynik inny niż odnotowany się w opisie radiologicznym.
+Algorytm raportuje stronę pary o~największym kącie, dlatego w~takich przypadkach wskazuje wynik inny niż odnotowany w opisie radiologicznym.
 Ten sam układ dwóch przeciwnych łuków (Th12--L2: 5,87\degree{} prawostronnie, L1--L5: 4,12\degree{} lewostronnie) występuje w~wyłączonym badaniu nr 23, co sugeruje, że jego opis może dotyczyć skrzywienia esowatego.
 
 Dwóch pozostałych rozbieżności nie wyjaśnia obecność drugiego łuku.
@@ -344,7 +357,7 @@ Wyniki te pokazują, że przy skrzywieniu dwułukowym pojedyncza etykieta strony
 \subsection{Zestawienie pomiarów}
 \label{subsec:zestawienie-kregozmyk}
 
-W wyniku działania algorytmu zwraca jest znormalizowana wartość przesunięcia $s$ (wzór~\ref{eq:normalized-slip}) wraz z~kierunkiem ześlizgu dla każdego z~siedmiu poziomów ruchowych, od Th11/Th12 do L5/S1.
+W wyniku działania algorytmu zwracana jest znormalizowana wartość przesunięcia $s$ (wzór~\ref{eq:normalized-slip}) wraz z~kierunkiem ześlizgu dla każdego z~siedmiu poziomów ruchowych, od Th11/Th12 do L5/S1.
 W~tabeli~\ref{tab:wyniki-kregozmyk} dla każdego badania wskazano poziomy opisane przez radiologa jako patologiczne oraz poziomy, gdzie przesunięcie przekroczyło wartość progową właściwą dla wskazanego kierunku, wraz z~wartością $s$ (podrozdział~\ref{subsec:prog-kregozmyk}).
 Ostatnie trzy kolumny podają liczbę poziomów wykrytych zgodnie z~opisem (TP), poziomów wykrytych, lecz nieopisanych (FP), oraz poziomów opisanych, lecz niewykrytych (FN); ich sumy odpowiadają macierzy pomyłek przedstawionej w~podrozdziale~\ref{subsec:skutecznosc-kregozmyk}.
 Dla badań nr 8 i~28 algorytm nie zwrócił wyniku z~powodu błędu segmentacji.
@@ -461,6 +474,7 @@ Wspólny próg 0,06 zapewnia czułość 0,873, lecz swoistość spada do 0,798, 
 Podniesienie wspólnego progu do 0,10 ogranicza liczbę fałszywych wskazań do 16, ale obniża czułość do 0,608, ponieważ pomija ześlizgi przednie o~niewielkim przesunięciu.
 Przyjęto progi osobne: 0,06 dla kręgozmyku i~0,10 dla tyłozmyku, przy których czułość wynosi 0,810, a~swoistość 0,949.
 Obniżenie progu kręgozmyku do 0,05 nie zwiększa czułości, a~dodaje trzy fałszywe wskazania, natomiast podniesienie progu tyłozmyku do 0,12 zwiększa swoistość do 0,963 kosztem spadku czułości do 0,747.
+Przyjęta para progów daje zarazem najwyższą wartość $MCC$ spośród rozpatrywanych wariantów, równą 0,745.
 Obydwa przyjęte progi leżą powyżej 9.~decyla wartości $s$ na poziomach nieopisanych dla danego kierunku.
 
 \begin{table}[H]
@@ -490,20 +504,20 @@ Obydwa przyjęte progi leżą powyżej 9.~decyla wartości $s$ na poziomach nieo
     \caption{Skuteczność klasyfikacji poziomów w~zależności od przyjętych wartości progowych}
     \label{tab:progi-kregozmyk}
     \small
-    \begin{tabular}{cccccccc}
+    \begin{tabular}{ccccccccc}
         \hline
-        \textbf{Próg $k$} & \textbf{Próg $t$} & \textbf{TP} & \textbf{FP} & \textbf{TN} & \textbf{FN} & \textbf{Czułość} & \textbf{Swoistość} \\
+        \textbf{Próg $k$} & \textbf{Próg $t$} & \textbf{TP} & \textbf{FP} & \textbf{TN} & \textbf{FN} & \textbf{Czułość} & \textbf{Swoistość} & \textbf{MCC} \\
         \hline
-        \multicolumn{8}{l}{\textit{próg wspólny dla obu kierunków}} \\
-        0,06 & 0,06 & 69 & 76 & 300 & 10 & 0,873 & 0,798 \\
-        0,08 & 0,08 & 56 & 36 & 340 & 23 & 0,709 & 0,904 \\
-        0,10 & 0,10 & 48 & 16 & 360 & 31 & 0,608 & 0,957 \\
+        \multicolumn{9}{l}{\textit{próg wspólny dla obu kierunków}} \\
+        0,06 & 0,06 & 69 & 76 & 300 & 10 & 0,873 & 0,798 & 0,546 \\\\
+        0,08 & 0,08 & 56 & 36 & 340 & 23 & 0,709 & 0,904 & 0,578 \\\\
+        0,10 & 0,10 & 48 & 16 & 360 & 31 & 0,608 & 0,957 & 0,616 \\\\
         \hline
-        \multicolumn{8}{l}{\textit{progi osobne dla kręgozmyku ($k$) i~tyłozmyku ($t$)}} \\
-        0,05 & 0,10 & 64 & 22 & 354 & 15 & 0,810 & 0,941 \\
-        0,06 & 0,10 & 64 & 19 & 357 & 15 & 0,810 & 0,949 \\
-        0,06 & 0,12 & 59 & 14 & 362 & 20 & 0,747 & 0,963 \\
-        0,07 & 0,10 & 58 & 17 & 359 & 21 & 0,734 & 0,955 \\
+        \multicolumn{9}{l}{\textit{progi osobne dla kręgozmyku ($k$) i~tyłozmyku ($t$)}} \\
+        0,05 & 0,10 & 64 & 22 & 354 & 15 & 0,810 & 0,941 & 0,727 \\\\
+        0,06 & 0,10 & 64 & 19 & 357 & 15 & 0,810 & 0,949 & 0,745 \\\\
+        0,06 & 0,12 & 59 & 14 & 362 & 20 & 0,747 & 0,963 & 0,732 \\\\
+        0,07 & 0,10 & 58 & 17 & 359 & 21 & 0,734 & 0,955 & 0,703 \\\\
         \hline
     \end{tabular}
 \end{table}
@@ -515,6 +529,7 @@ Macierz pomyłek dla przyjętych progów, odpowiednio 0,06 dla kręgozmyku i 0,1
 Spośród 455 poziomów ruchowych algorytm sklasyfikował zgodnie z opisem radiologicznym 421, co odpowiada dokładności 0,925.
 Wykrył 64 z 79 poziomów opisanych jako patologiczne (czułość 0,810) oraz poprawnie uznał za prawidłowe 357 z 376 poziomów niepatologicznych (swoistość 0,949).
 Łącznie algorytm wskazał 83 poziomy jako patologiczne, z czego 64 zostały również opisane przez radiologa.
+Współczynnik korelacji Matthewsa wynosi 0,745. Jest on wyraźnie niższy od dokładności, ponieważ przy przewadze poziomów prawidłowych dokładność w~dużej mierze odzwierciedla poprawne rozpoznanie klasy dominującej, natomiast $MCC$ uwzględnia w~równym stopniu 15 pominiętych i~19 fałszywie wskazanych poziomów.
 
 \begin{table}[H]
     \centering
@@ -737,7 +752,7 @@ W~badaniu nr 8 pomiar nie był możliwy, ponieważ segmentacja nie obejmuje koś
 \section{Dyskusja}
 \label{sec:dyskusja}
 
-Algorytm detekcji kręgozmyku i~tyłozmyku osiągnął dokładność 0,925 przy swoistości 0,949, natomiast algorytm detekcji skoliozy -- dokładność 0,712, co wynika przede wszystkim z~płynnej granicy między normą a~niewielkim skrzywieniem.
+Algorytm detekcji kręgozmyku i~tyłozmyku osiągnął dokładność 0,925 przy swoistości 0,949 i~współczynniku $MCC$ równym 0,745, natomiast algorytm detekcji skoliozy -- dokładność 0,712 przy $MCC$ równym 0,416, co wynika przede wszystkim z~płynnej granicy między normą a~niewielkim skrzywieniem.
 Ocenę obu algorytmów należy jednak odczytywać z~uwzględnieniem charakteru wzorca odniesienia: opis radiologiczny jest subiektywną oceną jednego lekarza, formułowaną bez podania wartości kąta czy przesunięcia i~przy definiowanym subiektywnie progu rozpoznania.
 Ocena parametrów geometrycznych kręgosłupa obarczona jest zmiennością międzyobserwatorską, wobec czego to samo badanie opisane przez innego radiologa mogłoby zostać sklasyfikowane odmiennie.
 W~zebranym materiale przejawia się to zarówno w~niejednoznacznych określeniach \enquote{niewielka} czy \enquote{dyskretna} skolioza, stosowanych przy bardzo różnych kątach, jak i~w~ześlizgach widocznych na obrazie i~wskazanych przez algorytm, lecz pominiętych w~opisie.
