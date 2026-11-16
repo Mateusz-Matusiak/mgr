@@ -34,7 +34,7 @@ Stanowi on podstawową metodę przesiewową stosowaną zarówno przez lekarzy or
 Test ten charakteryzuje wysoka czułość na deformacje rotacyjne, jednak nie pozwala na ustalenie wartości kąta skrzywienia.
 Z tego względu stanowi punkt wyjścia zarówno do oceny klinicznej skoliometrem, jak i do ewentualnej diagnostyki obrazowej.
 
-Pomiar  skoliometrem stanowi uzupełnienie testu zgięcia Adama i pozwala na półilościową ocenę wielkości rotacji tułowia (Angle of Trunk Rotation – ATR).
+Pomiar  skoliometrem stanowi uzupełnienie testu zgięcia Adamsa i pozwala na półilościową ocenę wielkości rotacji tułowia (Angle of Trunk Rotation – ATR).
 Badanie wykonuje się w pozycji skłonu do przodu, przykładając skoliometr wzdłuż linii wyrostków kolczystych na poziomie największej deformacji. Urządzenie mierzy różnicę wysokości pomiędzy obiema stronami tułowia, która odzwierciedla stopień rotacji kręgów.
 Wartość ATR jest wykorzystywana jako wskaźnik przesiewowy wspomagający identyfikację pacjentów wymagających dalszej diagnostyki. Należy jednak podkreślić, że pomiar skoliometrem nie zastępuje oceny radiologicznej i nie pozwala na bezpośrednie wyznaczenie kąta Cobba, stanowiącego podstawowy parametr służący do oceny stopnia zaawansowania skoliozy.
 Wartości ATR przekraczające 5–7 stopni wskazują na konieczność dalszej diagnostyki, a wartość powyżej 10 stopni zazwyczaj stanowią wskazanie do wykonania badania obrazowego, najczęściej RTG, wraz z oceną kąta Cobba.
@@ -373,7 +373,7 @@ Krok ten eliminuje błędy numeryczne akumulowane podczas wyznaczania kolejnych 
 \label{subsec:corner-points}
 
 Wyznaczenie bazy ortonormalnej $\{\vec{x}, \vec{y}, \vec{z}\}$ pozwala na uniezależnienie procesu analizy od globalnego układu współrzędnych badania.
-Kolejny etap algorytmu wykorzystuje macierzy rotacji do przeprowadzenia operacji przepróbkowania (ang. \textit{resampling}).
+Kolejny etap algorytmu wykorzystuje macierz rotacji do przeprowadzenia operacji przepróbkowania (ang. \textit{resampling}).
 Proces ten ma na celu przekształcenie trójwymiarowej chmury wokseli w serię zorientowanych diagnostycznie obrazów dwuwymiarowych.
 Takie podejście umożliwia sprowadzenie złożonej geometrii przestrzennej kręgosłupa do lokalnej płaszczyzny pomiarowej, na której mogą być stosowane klasyczne metody analizy obrazu i wizji komputerowej.
 
@@ -533,7 +533,7 @@ Następnie dokonuje się centrowania danych poprzez odjęcie centroidu od każde
 \begin{equation}
     X_i = p_i - \bar{p}
 \end{equation}
-Zcentrowane punkty tworzą macierz $A \in \mathbb{R}^{n\times3}$.
+Wycentrowane punkty tworzą macierz $A \in \mathbb{R}^{n\times3}$.
 Dekompozycja SVD macierzy $A$ zadana jest wzorem:
 \begin{equation}
     A = U \Sigma V^T
