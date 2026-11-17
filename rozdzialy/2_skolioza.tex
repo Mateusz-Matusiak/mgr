@@ -6,7 +6,7 @@
 Skolioza jest w literaturze medycznej definiowana jako nieprawidłowe boczne skrzywienie kręgosłupa, któremu może towarzyszyć rotacja kręgów.
 Według Scoliosis Research Society skoliozę definiuje się jako skrzywienie kręgosłupa, dla którego wartość kąta Cobba przekracza 10\degree{}.
 Na zdjęciu rentgenowskim kręgosłup osoby cierpiącej na skoliozę przyjmuje charakterystyczny kształt przypominający literę „S” lub „C”, w przeciwieństwie do prawidłowego przebiegu zbliżonego do linii prostej~\cite{srs}.
-Termin \enquote{skolioza} ma swoje korzenie w starożytnym słowie ``skolios'' (wygięty, skrzywiony) i został po raz pierwszy użyty przez Galena (130-201 rok naszej ery)~\cite{koniecznymr}.
+Termin \enquote{skolioza} ma swoje korzenie w starożytnym słowie \enquote{skolios} (wygięty, skrzywiony) i został po raz pierwszy użyty przez Galena (130-201 rok naszej ery)~\cite{koniecznymr}.
 
 Skoliozę można podzielić na trzy główne typy: idiopatyczną, wrodzoną i nerwowo-mięśniową.
 Najczęściej występującą postacią choroby jest młodzieńcza skolioza idiopatyczna (AIS), której przyczyna pozostaje nieznana, co znajduje swoje odzwierciedlenie w określeniu „idiopatyczna”.
@@ -200,7 +200,7 @@ Matematycznie oznacza to zerowanie się drugiej pochodnej (krzywizny) na końcac
     S''_\xi(0) = 0 \quad \text{oraz} \quad S''_\xi(1) = 0
 \end{equation}
 
-Dla każdego brakującego fragmentu danych o indeksie $k_{miss}$, wyznaczono odpowiadającą mu wartość parametru $t_{miss}$ poprzez interpolację liniową znanych indeksów.
+Dla każdego brakującego punktu, czyli każdego indeksu ze zbioru $I_{miss}$, wyznaczono odpowiadającą mu wartość parametru $t_{miss}$ poprzez interpolację liniową znanych indeksów.
 Ostateczne współrzędne punktu zrekonstruowanego $P_{rec}$ obliczono jako:
 
 \begin{equation}
@@ -313,7 +313,7 @@ Algorytm sprawdza składową $z$ wektora i w razie potrzeby dokonuje jego inwers
     \centering
     \includegraphics[width=0.75\textwidth]{obrazy/y_vec_with_points.png}
     \captionsetup{justification=centering, font=small}
-    \caption{Wektor $\hat{y}_{final}$ dla jednego z kręgów (L2) wraz z lokalnymi punktami kanału kręgowego}
+    \caption{Wektor $\vec{y}$ dla jednego z kręgów (L2) wraz z lokalnymi punktami kanału kręgowego}
     \label{fig:v_vec_with_points}
 \end{figure}
 
@@ -343,7 +343,7 @@ Ostatnim krokiem -- mając wyznaczone dwa wektory jednostkowe $y$ (\eqref{eq:nor
 Wektor ten odpowiada osi boczno-przyśrodkowej (ang. \textit{medial-lateral}), czyli orientacji lewo-prawo.
 
 Aby zapewnić wzajemną prostopadłość wszystkich osi lokalnego układu współrzędnych, co jest niezbędne do poprawnego przepróbkowania obrazu bez wprowadzania deformacji geometrycznych, zastosowano operację iloczynu wektorowego.
-Wektor $\vec{x}_{raw}$ jest wyznaczony jako iloczyn wektorowy osi grzbietowej oraz pionowej.
+Wektor $\vec{x}_{raw}$ jest wyznaczony jako iloczyn wektorowy osi przednio-tylnej $\vec{z}$ oraz osi pionowej $\vec{y}$.
 
 \begin{equation} \label{eq:cross_product_x} \vec{x}_{raw} = \vec{z} \times \vec{y}
 \end{equation}
@@ -590,24 +590,24 @@ Tak zdefiniowana baza $\{\vec{x}_{plane},\, \vec{y}_{plane}\}$ pozwala wyrazić 
 
 
 Po rzutowaniu punktów na optymalną płaszczyznę, algorytm implementuje funkcję \texttt{cobb\_angle}, której zadaniem jest wyznaczenie kąta pomiędzy wektorami reprezentującymi krawędzie kręgów granicznych oraz określenie orientacji skrzywienia (lewo- lub prawostronne).
-Dla wybranej pary kręgów definiowane są dwa wektory kierunkowe $u$ (wektor krawędzi górnej kręgu górnego) oraz $l$ (wektor krawędzi dolnej kręgu dolnego).
+Dla wybranej pary kręgów definiowane są dwa trójwymiarowe wektory kierunkowe: $\vec{v}_1$ (wektor krawędzi górnej kręgu górnego) oraz $\vec{v}_2$ (wektor krawędzi dolnej kręgu dolnego).
 Zgodnie z geometryczną implementacją metody Cobba, kąt skrzywienia $\alpha$ odpowiada kątowi przecięcia prostych zawierających te wektory.
-Wartość kąta wyznaczana jest przy użyciu iloczynu skalarnego:
-\begin{equation} \label{eq:cobb}
-\begin{aligned}
-    \vec{v}_1 \cdot \vec{v}_2 &= x_1 x_2 + y_1 y_2 \\
-    \|\vec{v}_1\| &= \sqrt{x_1^2 + y_1^2}, \quad \|\vec{v}_2\| = \sqrt{x_2^2 + y_2^2} \\
-    \alpha &= \arccos\!\left(\frac{\vec{v}_1 \cdot \vec{v}_2}{\|\vec{v}_1\|\,\|\vec{v}_2\|}\right) \cdot \frac{180\degree}{\pi}
-\end{aligned}
-\end{equation}
 
-Aby zapewnić poprawność obliczeń niezależnie od orientacji kręgosłupa w globalnym układzie współrzędnych skanera, wektory $\vec{v}_1$ i $\vec{v}_2$ są przed wyznaczeniem kąta rzutowane na dwuwymiarowy układ współrzędnych wspólnej płaszczyzny pomiarowej, wyznaczonej przez bazy $\vec{x}_{plane}$ i $\vec{y}_{plane}$ (wyznaczone wcześniej metodą SVD):
+Aby zapewnić poprawność obliczeń niezależnie od orientacji kręgosłupa w globalnym układzie współrzędnych skanera, wektory $\vec{v}_1$ i $\vec{v}_2$ są przed wyznaczeniem kąta rzutowane na dwuwymiarowy układ współrzędnych wspólnej płaszczyzny pomiarowej, rozpiętej przez wektory bazowe $\vec{x}_{plane}$ i $\vec{y}_{plane}$ (równania \eqref{eq:plane_x} i \eqref{eq:plane_y}):
 
 \begin{equation}
-    \vec{u}_k = \begin{bmatrix} \vec{v}_k \cdot \vec{x}_{plane} \\ \vec{v}_k \cdot \vec{y}_{plane} \end{bmatrix}, \quad k \in \{1, 2\}
+    \vec{u}_k = \begin{bmatrix} u_{kx} \\ u_{ky} \end{bmatrix} = \begin{bmatrix} \vec{v}_k \cdot \vec{x}_{plane} \\ \vec{v}_k \cdot \vec{y}_{plane} \end{bmatrix}, \quad k \in \{1, 2\}
 \end{equation}
 
-Operacja ta eliminuje składową normalną do płaszczyzny, zapewniając, że iloczyn skalarny i normy w równaniu \eqref{eq:cobb} operują wyłącznie na geometrii leżącej w płaszczyźnie pomiaru.
+Operacja ta eliminuje składową normalną do płaszczyzny, dzięki czemu dalsze obliczenia operują wyłącznie na geometrii leżącej w płaszczyźnie pomiaru.
+Wartość kąta wyznaczana jest przy użyciu iloczynu skalarnego rzutowanych wektorów:
+\begin{equation} \label{eq:cobb}
+\begin{aligned}
+    \vec{u}_1 \cdot \vec{u}_2 &= u_{1x} u_{2x} + u_{1y} u_{2y} \\
+    \|\vec{u}_1\| &= \sqrt{u_{1x}^2 + u_{1y}^2}, \quad \|\vec{u}_2\| = \sqrt{u_{2x}^2 + u_{2y}^2} \\
+    \alpha &= \arccos\!\left(\frac{\vec{u}_1 \cdot \vec{u}_2}{\|\vec{u}_1\|\,\|\vec{u}_2\|}\right) \cdot \frac{180\degree}{\pi}
+\end{aligned}
+\end{equation}
 
 Strona skrzywienia kręgosłupa wyznaczana jest na podstawie znaku iloczynu wektorowego rzutowanych wektorów $\vec{u}_1$ i $\vec{u}_2$:
 
