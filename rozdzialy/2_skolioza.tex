@@ -543,6 +543,8 @@ Wektor normalny $n$ szukanej płaszczyzny odpowiada wierszowi macierzy $V^T$, kt
 Wektor ten wskazuje kierunek, w którym wariancja danych jest najmniejsza, co matematycznie definiuje kierunek normalny do płaszczyzny najlepiej dopasowanej w sensie najmniejszych kwadratów odległości ortogonalnych.
 
 Sama dekompozycja SVD dostarcza jedynie wektora normalnego $n$, prostopadłego do płaszczyzny pomiarowej.
+Wektor ten wyznaczony jest z dokładnością do zwrotu, dlatego zwrot ustalany jest anatomicznie: jeżeli składowa przednio-tylna wektora $n$ jest ujemna, wektor jest odwracany, dzięki czemu w układzie LPS zawsze wskazuje on kierunek tylny.
+Bez tego ustalenia baza płaszczyzny mogłaby w części badań stanowić odbicie lustrzane, a znak wyznaczany w równaniu \eqref{eq:cross_sign}, a zatem i strona skrzywienia, byłby przypadkowy.
 Aby zdefiniować ortonormalną bazę $\{\vec{x}_{plane}, \vec{y}_{plane}\}$ rozpinającą tę płaszczyznę, wykorzystano dodatkowo kierunek przebiegu kręgosłupa $\vec{s}$, wyznaczony jako różnica środków geometrycznych chmur punktów narożnych kręgu górnego ($\bar{p}_{upper}$) i dolnego ($\bar{p}_{lower}$):
 
 \begin{equation} \label{eq:spine_vec}
@@ -615,10 +617,10 @@ Strona skrzywienia kręgosłupa wyznaczana jest na podstawie znaku iloczynu wekt
     c = u_{1x} \cdot u_{2y} - u_{1y} \cdot u_{2x}
 \end{equation}
 
-Jeżeli $c \geq 0$, skrzywienie klasyfikowane jest jako \textit{prawostronne} (łac. \textit{dextroscoliosis}), w przeciwnym razie jako \textit{lewostronne} (łac. \textit{levoscoliosis}).
+Jeżeli $c \geq 0$, skrzywienie klasyfikowane jest jako \textit{lewostronne} (łac. \textit{levoscoliosis}), w przeciwnym razie jako \textit{prawostronne} (łac. \textit{dextroscoliosis}).
 
 Analiza obejmowała kręgi od Th11 do L5.
-Kręg S1, pomimo obecności w mapie segmentacji, został wyłączony z dalszej analizy na podstawie konsultacji z lekarzem radiologiem. Stanowi on część kości krzyżowej, a jego górna powierzchnia nie odpowiada płytce granicznej w rozumieniu stosowanym dla kręgów lędźwiowych. Jej nachylenie jest w znacznym stopniu determinowane ustawieniem miednicy, a nie geometrią skrzywienia odcinka lędźwiowego kręgosłupa. Uwzględnienie kręgu S1 podczas obliczeń prowadziło do zawyżania wartości wyznaczanego kąta Cobba, szczególnie w analizie par obejmujących poziom L5/S1.
+Kręg S1, pomimo obecności w mapie segmentacji, został wyłączony z dalszej analizy na podstawie konsultacji z lekarzem radiologiem. Stanowi on część kości krzyżowej zrośniętej z miednicą, dlatego nachylenie jego górnej płytki granicznej jest w znacznym stopniu determinowane ustawieniem miednicy, a nie geometrią skrzywienia odcinka lędźwiowego kręgosłupa. Uwzględnienie kręgu S1 podczas obliczeń prowadziło do zawyżania wartości wyznaczanego kąta Cobba, szczególnie w analizie par obejmujących poziom L5/S1.
 
 Obliczenia kąta Cobba wykonywane są dla wszystkich par kręgów $(k_i,\, k_j)$ spełniających warunek $j \geq i + 2$, co wyklucza pary kręgów bezpośrednio sąsiadujących.
 Dla takich par wyznaczony kąt zdominowany jest przez klinowatość krążka międzykręgowego oraz lokalną asymetrię płytek granicznych, a nie przez rzeczywiste skrzywienie kręgosłupa, przez co wynik nie odpowiadałby pomiarowi wykonywanemu metodą Cobba. Wynikowy kąt maksymalny wyznaczany jest jako:
@@ -632,7 +634,7 @@ Klasyfikacja badania jako zdrowego lub patologicznego polega na porównaniu wyzn
 Punktem odniesienia jest kryterium Scoliosis Research Society, zgodnie z którym skrzywienie o kącie Cobba przekraczającym 10\degree{} stanowi podstawę rozpoznania skoliozy.
 Kryterium to sformułowano jednak dla pomiaru wykonywanego na radiogramie w pozycji stojącej, podczas gdy analizowane segmentacje pochodzą z badań MRI wykonywanych w pozycji leżącej, w której skrzywienie bywa mniej nasilone.
 Z tego powodu wartość progowa stosowana przez opisywany algorytm została dobrana empirycznie na podstawie zbioru badań referencyjnych; procedurę jej wyznaczenia oraz uzyskane wyniki przedstawiono w dalszej części pracy.
-Dane pośrednie -- punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów - są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.
+Dane pośrednie -- punkty kanału kręgowego, wektory lokalnych układów współrzędnych oraz punkty narożne trzonów -- są eksportowane do plików JSON kompatybilnych z oprogramowaniem 3D Slicer, co umożliwia wizualną weryfikację wyników przez lekarza.
 \subsection{Złożoność obliczeniowa}
 \label{subsec:zlozonosc-skolioza}
 
