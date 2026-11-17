@@ -3,11 +3,11 @@
 
 \section{Kliniczna charakterystyka kręgozmyku i tyłozmyku}
 
-Kręgozmyk (łac. \textit{spondylolisthesis}, z gr. \textit{spondylos} -- kręg, \textit{olisthesis} -- ześlizg) definiowany jest jako przemieszczenie trzonu kręgu ku przodowi względem kręgu leżącego poniżej, obserwowane w płaszczyźnie strzałkowej.\cite{gagnet}
+Kręgozmyk (łac. \textit{spondylolisthesis}, z gr. \textit{spondylos} -- kręg, \textit{olisthesis} -- ześlizg) definiowany jest jako przemieszczenie trzonu kręgu ku przodowi względem kręgu leżącego poniżej, obserwowane w płaszczyźnie strzałkowej~\cite{gagnet}.
 Przeciwieństwem tej patologii jest tyłozmyk (ang. \textit{retrolisthesis}), w którym przemieszczenie następuje w kierunku tylnym.
 Obydwa stany prowadzą do zaburzenia prawidłowej osi biomechanicznej kręgosłupa, a w zaawansowanych przypadkach -- do zwężenia kanału kręgowego i ucisku struktur nerwowych.
 
-Powszechnie stosowana klasyfikacja Wiltse'a, Newmana i Macnaba\cite{wiltse} wyróżnia pięć typów kręgozmyku ze względu na mechanizm powstawania:
+Powszechnie stosowana klasyfikacja Wiltse'a, Newmana i Macnaba~\cite{wiltse} wyróżnia pięć typów kręgozmyku ze względu na mechanizm powstawania:
 
 \begin{itemize}
     \item \textbf{dysplastyczny} -- wynikający z wrodzonej wady budowy stawów międzykręgowych lub tylnego łuku kręgu; rozpoznawany zazwyczaj w dzieciństwie,
@@ -18,7 +18,7 @@ Powszechnie stosowana klasyfikacja Wiltse'a, Newmana i Macnaba\cite{wiltse} wyr�
 \end{itemize}
 
 Kręgozmyk zwyrodnieniowy dotyczy przede wszystkim poziomów L4/L5 i L5/S1, gdzie obciążenie mechaniczne kręgosłupa jest największe.
-Degeneracja krążka międzykręgowego prowadzi do niestabilności segmentu ruchowego, a wtórne zmiany w stawach międzykręgowych nie są w stanie skutecznie ograniczyć patologicznego ruchu trzonów\cite{akkawi}.
+Degeneracja krążka międzykręgowego prowadzi do niestabilności segmentu ruchowego, a wtórne zmiany w stawach międzykręgowych nie są w stanie skutecznie ograniczyć patologicznego ruchu trzonów~\cite{akkawi}.
 Tyłozmyk zwyrodnieniowy występuje rzadziej niż kręgozmyk przedni i częściej towarzyszy mu wielopoziomowe zwężenie kanału kręgowego.
 
 Objawy kliniczne zależą od stopnia przemieszczenia i poziomu zajętego odcinka.
@@ -30,8 +30,8 @@ Takie badanie uwzględnia obciążenie grawitacyjne kręgosłupa, które może n
 Rezonans magnetyczny stanowi uzupełnienie diagnostyki, umożliwiając ocenę stopnia ucisku worka oponowego, korzeni nerwowych oraz stanu krążków międzykręgowych.
 Dane wejściowe dla algorytmu opisanego w niniejszym rozdziale stanowią wyniki segmentacji obrazów MRI.
 
-Ilościową ocenę stopnia przemieszczenia kręgu przeprowadza się z wykorzystaniem klasyfikacji Meyerdinga\cite{koslosky}, która dzieli kręgozmyk na cztery stopnie w zależności od procentowego przesunięcia trzonu kręgu względem szerokości górnej powierzchni trzonu kręgu położonego poniżej.
-W tym celu na bocznym zdjęciu RTG wyznacza się tylny obrys trzonu kręgu górnego i dolnego, a wartość ześlizgu wyraża się jako iloraz odległości między tylnymi krawędziami trzonów do szerokości górnej płytki granicznej kręgu dolnego.
+Ilościową ocenę stopnia przemieszczenia kręgu przeprowadza się z wykorzystaniem klasyfikacji Meyerdinga~\cite{koslosky}, która dzieli kręgozmyk na cztery stopnie w zależności od procentowego przesunięcia trzonu kręgu względem szerokości górnej powierzchni trzonu kręgu położonego poniżej.
+W tym celu na bocznym zdjęciu RTG wyznacza się tylny obrys trzonu kręgu górnego i dolnego, a wartość ześlizgu wyraża się jako iloraz odległości między tylnymi krawędziami trzonów i szerokości górnej płytki granicznej kręgu dolnego.
 Stopniowanie przedstawiono w tabeli~\ref{tab:meyerding}.
 
 \begin{table}[H]
@@ -50,10 +50,10 @@ IV  & 75--100\% & ciężki, wyraźne objawy neurologiczne \\
 \end{tabular}
 \end{table}
 
-W niektórych ujęciach skalę uzupełnia się o stopień V (spondyloptoza), odpowiadający całkowitemu zsunięciu trzonu kręgu poniżej powierzchni kręgu leżącego niżej (przemieszczenie powyżej 100\%).\cite{koslosky}
+W niektórych ujęciach skalę uzupełnia się o stopień V (spondyloptoza), odpowiadający całkowitemu zsunięciu trzonu kręgu poniżej powierzchni kręgu leżącego niżej (przemieszczenie powyżej 100\%)~\cite{koslosky}.
 
-Pomiar według Meyerdinga jest prosty i powtarzalny, jednak obarczony pewną zmiennością obserwatora wynikającą z trudności w precyzyjnym wyznaczeniu obrysów trzonów na dwuwymiarowym zdjęciu RTG.\cite{tallroth}
-Ponadto standardowa projekcja boczna nie uwzględnia rotacji osiowej kręgów, która może towarzyszyć kręgozmykowi zwłaszcza w przebiegu skoliozy.
+Pomiar według Meyerdinga jest prosty i powtarzalny, jednak obarczony pewną zmiennością obserwatora wynikającą z trudności w precyzyjnym wyznaczeniu obrysów trzonów na dwuwymiarowym zdjęciu RTG~\cite{tallroth}.
+Ponadto standardowa projekcja boczna nie uwzględnia rotacji osiowej kręgów, która może towarzyszyć kręgozmykowi, zwłaszcza w przebiegu skoliozy.
 
 Algorytm opisany w niniejszym rozdziale realizuje automatyczny pomiar analogiczny do metody Meyerdinga, operując jednak na trójwymiarowej segmentacji MRI zamiast dwuwymiarowego zdjęcia RTG.
 Wyznaczone punkty narożne trzonów kręgów pozwalają na obliczenie znormalizowanego przesunięcia w płaszczyźnie strzałkowej każdego kręgu, bez konieczności ręcznego wskazywania struktur anatomicznych przez radiologa.
@@ -72,7 +72,7 @@ Różnice w wymaganiach funkcjonalnych:
     \item \textbf{Ekstrakcja przekrojów 2D w płaszczyźnie strzałkowej} -- wolumen próbkowany jest do lokalnej płaszczyzny strzałkowej każdego kręgu, a nie czołowej, ponieważ kręgozmyk i tyłozmyk są przemieszczeniami przednio-tylnymi.
     \item \textbf{Pomiar znormalizowanego przesunięcia strzałkowego} -- algorytm oblicza przemieszczenie górnego trzonu kręgu względem dolnego.
     Wynik jest wartością bezwymiarową z przedziału $[0, 1]$, interpretowaną jako odsetek szerokości trzonu kręgu dolnego -- analogicznie do skali Meyerdinga stosowanej w pomiarach na zdjęciach RTG.
-    \item \textbf{Klasyfikacja kierunku przesunięcia} -- dla każdej pary kręgów algorytm określa, czy krąg górny przemieścił się ku przodowi względem dolnego (kręgozmyk, \textit{spondylolisthesis}), czy ku tyłowi (tyłozmyk, \textit{retrolisthesis}).
+    \item \textbf{Klasyfikacja kierunku przesunięcia} -- dla każdej pary kręgów algorytm określa, czy kręg górny przemieścił się ku przodowi względem dolnego (kręgozmyk, \textit{spondylolisthesis}), czy ku tyłowi (tyłozmyk, \textit{retrolisthesis}).
     \item \textbf{Analiza wszystkich par sąsiednich kręgów} -- pomiar wykonywany jest dla każdej pary kolejnych kręgów obecnych w segmentacji (Th11--S1); wynik zwracany jest osobno dla każdego poziomu.
 \end{itemize}
 
@@ -129,7 +129,7 @@ Zestawienie parametrów obu algorytmów przedstawiono w tabeli~\ref{tab:porownan
 \hline
 \textbf{Parametr} & \textbf{Skolioza} & \textbf{Kręgozmyk / tyłozmyk} \\
 \hline
-zamknięcie morfologiczne kanału & nie stosowane & promień $(5,5,5)$ wokseli \\
+zamknięcie morfologiczne kanału & niestosowane & promień $(5,5,5)$ wokseli \\
 rozdzielczość próbkowania szkieletu & $1{\times}1{\times}2$ mm & $1{\times}1{\times}3$ mm \\
 okno analizy głównych składowych & 21 punktów & 21 punktów \\
 płaszczyzna przekroju & $(\vec{x}, \vec{y})$ -- czołowa & $(\vec{z}, \vec{y})$ -- strzałkowa \\
@@ -287,7 +287,7 @@ Dzięki temu określenie kierunku ześlizgu pozostaje niezależne od orientacji 
 Pomiar wykonywany jest dla wszystkich par kręgów sąsiadujących ze sobą w analizowanym odcinku, to jest dla par Th11/Th12, Th12/L1, L1/L2, L2/L3, L3/L4, L4/L5 oraz L5/S1.
 Ograniczenie do par sąsiednich wynika z definicji klinicznej: kręgozmyk jest przemieszczeniem względem kręgu bezpośrednio niżej położonego i opisywany jest zawsze na konkretnym poziomie ruchowym, w przeciwieństwie do skrzywienia skoliotycznego, które obejmuje wiele poziomów jednocześnie.
 
-Wynikiem działania algorytmu jest zbiór trzech wartości $(poziom, kierunek, s)$ -- po jednej dla każdej pary obecnej w segmentacji.
+Wynikiem działania algorytmu jest zbiór trzech wartości $(\text{poziom}, \text{kierunek}, \text{s})$ -- po jednej dla każdej pary obecnej w segmentacji.
 Wartości te nie są uśredniane ani agregowane do pojedynczej liczby, ponieważ rozpoznanie kliniczne formułowane jest osobno dla każdego poziomu, a jeden pacjent może wykazywać kręgozmyk na jednym poziomie i tyłozmyk na innym.
 Zestawienie takie odpowiada strukturą opisowi radiologicznemu badania.
 

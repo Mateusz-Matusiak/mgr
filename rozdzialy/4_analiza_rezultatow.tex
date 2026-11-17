@@ -2,7 +2,7 @@
 \label{chap:wyniki}
 
 Niniejszy rozdział przedstawia analizę działania algorytmów opisanych w~rozdziałach~\ref{chap:skolioza} oraz~\ref{chap:kregozmyk}.
-Analiza obejmowała uruchomienie obydwu przypadków na tym samym zbiorze map segmentacji, a~uzyskane wyniki zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
+Analiza obejmowała uruchomienie obydwu algorytmów na tym samym zbiorze map segmentacji, a~uzyskane wyniki zestawiono z~rozpoznaniem zawartym w~opisie radiologicznym odpowiadającego badania.
 Rozdział obejmuje charakterystykę wykorzystanego zbioru badań oraz przyjętej metodyki oceny. Następnie przedstawiono wyniki każdego z~algorytmów osobno wraz z~procedurą doboru wartości progowej oddzielającej przypadki prawidłowe od patologicznych.
 Analizę zamyka lista przypadków sklasyfikowanych niezgodnie z~opisem radiologicznym wraz z omówieniem zidentyfikowanych źródeł rozbieżności.
 
@@ -17,7 +17,7 @@ Ponieważ algorytmy operują wyłącznie na mapach etykiet, a nie na surowych wa
 
 
 Analizą objęto osiem struktur kostnych: kręgi od Th11 do L5 oraz pierwszy kręg kości krzyżowej S1, wraz z etykietami tworzącymi kanał kręgowy.
-Oba algorytmy wykorzystują ten zakres w odmienny sposób: pomiar przesunięcia strzałkowego prowadzony jest dla wszystkich siedmiu poziomów międzykręgowych (podrozdział~\ref{subsec:pary-kregow}), natomiast pomiar kąta Cobba pomija krąg S1, którego górna powierzchnia nie stanowi płytki granicznej porównywalnej z płytkami granicznymi kręgów lędźwiowych (podrozdział~\ref{subsec:cobb}).
+Oba algorytmy wykorzystują ten zakres w odmienny sposób: pomiar przesunięcia strzałkowego prowadzony jest dla wszystkich siedmiu poziomów międzykręgowych (podrozdział~\ref{subsec:pary-kregow}), natomiast pomiar kąta Cobba pomija kręg S1, którego górna powierzchnia nie stanowi płytki granicznej porównywalnej z płytkami granicznymi kręgów lędźwiowych (podrozdział~\ref{subsec:cobb}).
 
 Ocena referencyjna została zrealizowana na podstawie opisu radiologicznego badania.
 Opisy sformułowano w~konwencji stosowanej w~praktyce klinicznej: wskazują rozpoznanie oraz poziom, na podstawie którego stwierdzono schorzenie, a~w~części przypadków również stopień zaawansowania i~wielkość przemieszczenia wyrażoną w~milimetrach.
@@ -67,14 +67,14 @@ Wzorcem odniesienia dla obu algorytmów jest opis radiologiczny badania, sporzą
 Charakter tego wzorca jest jednak odmienny dla każdego z~algorytmów, co przekłada się na sposób prowadzenia porównania.
 
 W~przypadku skoliozy z~opisu odczytywana jest informacja binarna: czy radiolog rozpoznał skrzywienie boczne, czy też nie.
-Opis nie zawiera wartości kąta Cobba, a~jedynie samo rozpoznanie, często opatrzone określeniem stopnia nasilenia (``dyskretna'', ``niewielka'', ``zaznaczona'', ``nasilona'').
+Opis nie zawiera wartości kąta Cobba, a~jedynie samo rozpoznanie, często opatrzone określeniem stopnia nasilenia (\enqoute{dyskretna}, \enquote{niewielka}, \enquote{zaznaczona}, \enquote{nasilona}).
 Referencja ma zatem charakter jakościowy i~odnosi się do całego badania, nie zaś do konkretnej pary kręgów.
 
 W~przypadku kręgozmyku i~tyłozmyku opis jest znacznie bardziej szczegółowy: wskazuje poziom ruchowy, kierunek przemieszczenia, a~w~większości przypadków również stopień w~skali Meyerdinga lub wielkość ześlizgu w~milimetrach.
 Referencja odnosi się więc do pojedynczego poziomu ruchowego, a~nie do badania jako całości.
 
 Przełożenie opisu słownego na etykiety poziomów wymagało przyjęcia czterech założeń interpretacyjnych.
-Po pierwsze, opis wskazujący pojedynczy krąg (``kręgozmyk kręgu L5'') interpretowany jest jako ześlizg tego kręgu względem kręgu położonego bezpośrednio niżej, a~więc jako patologia poziomu L5/S1.
+Po pierwsze, opis wskazujący pojedynczy kręg (``kręgozmyk kręgu L5'') interpretowany jest jako ześlizg tego kręgu względem kręgu położonego bezpośrednio niżej, a~więc jako patologia poziomu L5/S1.
 Po drugie, poziom ruchowy niewymieniony w~opisie traktowany jest jako prawidłowy; jest to założenie konieczne, ponieważ opis odnotowuje wyłącznie zmiany patologiczne i~nie stwierdza wprost prawidłowości pozostałych poziomów.
 Po trzecie, ujednolicono terminologię: określenia ``kręgozmyk'', ``przodozmyk'', ``ześlizg przedni'' i~``antelisteza'' sprowadzono do kręgozmyku, a~``tyłozmyk'', ``retrozmyk'', ``retrolisteza'' i~``ześlizg tylny'' do tyłozmyku.
 Po czwarte, sformułowania sygnalizujące zmianę niepełnoobjawową (``tendencja do ześlizgu'', ``zaznaczony ześlizg'') zaliczono do przypadków patologicznych, ponieważ radiolog uznał je za warte odnotowania w~opisie.
@@ -95,7 +95,7 @@ Materiał ten ma większą wartość niż sam opis radiologiczny, ponieważ odno
 \label{subsec:miary}
 
 Zgodność wyniku algorytmu z~oceną referencyjną opisano przy użyciu czterech liczności.
-Przypadek prawdziwie dodatni ($TP$) oznacza zgodne rozpoznanie patologii zarówno przez algorytm jak i~radiologa, a~przypadek prawdziwie ujemny ($TN$) -- zgodne stwierdzenie jej braku.
+Przypadek prawdziwie dodatni ($TP$) oznacza zgodne rozpoznanie patologii zarówno przez algorytm, jak i~radiologa, a~przypadek prawdziwie ujemny ($TN$) -- zgodne stwierdzenie jej braku.
 Przypadek fałszywie dodatni ($FP$) to wskazanie patologii tam, gdzie opis jej nie odnotowuje, natomiast przypadek fałszywie ujemny ($FN$) -- pominięcie patologii opisanej przez radiologa.
 Jednostką klasyfikacji jest badanie w~przypadku algorytmu detekcji skoliozy oraz pojedynczy poziom ruchowy w~przypadku algorytmu detekcji kręgozmyku i~tyłozmyku.
 
@@ -143,7 +143,7 @@ Implementację przygotowano w~języku Python~3.13 z~wykorzystaniem bibliotek Sim
 Obliczenia prowadzono jednowątkowo, bez wykorzystania akceleracji sprzętowej.
 
 Czas przetwarzania pojedynczego badania zmierzono dla całego zbioru, uwzględniając pełny cykl działania algorytmu, od wczytania mapy segmentacji do wygenerowania wyniku.
-Mediana czasu przetwarzania wyniosła 1,68 s (zakres 1,60-1,81 s) dla algorytmu detekcji skoliozy oraz 1,67 s dla algorytmu detekcji kręgozmyku i tyłozmyku.
+Mediana czasu przetwarzania wyniosła 1,68 s (zakres 1,60--1,81 s) dla algorytmu detekcji skoliozy oraz 1,67 s dla algorytmu detekcji kręgozmyku i tyłozmyku.
 
 Oznacza to, że przetworzenie całego zbioru 67 badań zajmuje na jednym rdzeniu procesora niespełna cztery minuty. Wynik ten potwierdza wnioski przedstawione w analizie złożoności (podrozdział~\ref{subsec:zlozonosc-skolioza}), wskazując, że koszt obliczeniowy nie stanowi istotnego ograniczenia w zastosowaniach przesiewowych, w których każde badanie analizowane jest jednokrotnie, bezpośrednio po akwizycji.
 
@@ -661,14 +661,14 @@ Inny charakter ma badanie nr 2, w~którym krążek L4/L5 jest wyższy w~części
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=9cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case2_tylozmyk_FP}
-        \caption{badanie nr 2 -- poziom L4/L5, $s = 0,126$}
+        \caption{badanie nr 2 -- poziom L4/L5, $s = 0{,}126$}
         \label{fig:kregozmyk-fp-1}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=6cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case10_FP}
-        \caption{badanie nr 10 -- poziom L4/L5, $s = 0,110$}
+        \caption{badanie nr 10 -- poziom L4/L5, $s = 0{,}110$}
         \label{fig:kregozmyk-fp-2}
     \end{subfigure}
 
@@ -677,14 +677,14 @@ Inny charakter ma badanie nr 2, w~którym krążek L4/L5 jest wyższy w~części
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=6cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case35_FP}
-        \caption{badanie nr 35 -- poziom L5/S1, $s = 0,185$}
+        \caption{badanie nr 35 -- poziom L5/S1, $s = 0{,}185$}
         \label{fig:kregozmyk-fp-3}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=6cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case59_FP}
-        \caption{badanie nr 59 -- poziom L5/S1, $s = 0,185$}
+        \caption{badanie nr 59 -- poziom L5/S1, $s = 0{,}185$}
         \label{fig:kregozmyk-fp-4}
     \end{subfigure}
 
@@ -693,14 +693,14 @@ Inny charakter ma badanie nr 2, w~którym krążek L4/L5 jest wyższy w~części
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=6cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case61_FP}
-        \caption{badanie nr 61 -- poziom L2/L3, $s = 0,109$}
+        \caption{badanie nr 61 -- poziom L2/L3, $s = 0{,}109$}
         \label{fig:kregozmyk-fp-5}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[height=6cm, width=\textwidth, keepaspectratio]{obrazy/zmyk/case65_FP}
-        \caption{badanie nr 65 -- poziom L4/L5, $s = 0,105$}
+        \caption{badanie nr 65 -- poziom L4/L5, $s = 0{,}105$}
         \label{fig:kregozmyk-fp-6}
     \end{subfigure}
     \captionsetup{justification=centering, font=small}
